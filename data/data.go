@@ -105,16 +105,12 @@ func (f *Figure) UnmarshalJSON(b []byte) error {
 		return errors.New("invalid vertices")
 	}
 
-	for i := 0; i < len(edges); i++ {
-		if i%2 == 0 {
-			f.Edges = append(f.Edges, &Edge{
-				A: edges[i],
-			})
-		} else {
-			f.Edges[i/2].B = edges[i]
-		}
+	for _, e := range edges {
+		f.Edges = append(f.Edges, &Edge{
+			A: vertices[e.X],
+			B: vertices[e.Y],
+		})
 	}
-
 	f.Vertices = vertices
 	return nil
 }
