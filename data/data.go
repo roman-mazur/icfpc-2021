@@ -55,7 +55,7 @@ func (e *Edge) Line() (a, b, c float64) {
 	} else if e.A.X == e.B.X {
 		a = 1
 		b = 0
-		c = -float64(e.A.Y)
+		c = -float64(e.A.X)
 	} else {
 		a = float64(e.A.Y-e.B.Y) / float64(e.A.X-e.B.X)
 		b = -1
