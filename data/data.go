@@ -7,16 +7,16 @@ import (
 	"math"
 )
 
-type Vertice struct {
+type Vertex struct {
 	X, Y int
 }
 
-func (v *Vertice) String() string {
+func (v *Vertex) String() string {
 	return fmt.Sprintf("(%d,%d)", v.X, v.Y)
 }
 
 type Edge struct {
-	A, B *Vertice
+	A, B *Vertex
 }
 
 func (e *Edge) String() string {
@@ -24,11 +24,11 @@ func (e *Edge) String() string {
 }
 
 type Hole struct {
-	Vertices []*Vertice
+	Vertices []*Vertex
 }
 
 type Figure struct {
-	Vertices []*Vertice
+	Vertices []*Vertex
 	Edges    []*Edge
 }
 
@@ -63,7 +63,7 @@ func (e *Edge) Line() (a, b, c float64) {
 	return
 }
 
-func (v *Vertice) UnmarshalJSON(b []byte) error {
+func (v *Vertex) UnmarshalJSON(b []byte) error {
 	var rawVtx []int
 	if err := json.Unmarshal(b, &rawVtx); err != nil {
 		return err
@@ -80,7 +80,7 @@ func (v *Vertice) UnmarshalJSON(b []byte) error {
 }
 
 func (h *Hole) UnmarshalJSON(b []byte) error {
-	var vertices []*Vertice
+	var vertices []*Vertex
 	if err := json.Unmarshal(b, &vertices); err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func (h *Hole) UnmarshalJSON(b []byte) error {
 }
 
 func (f *Figure) UnmarshalJSON(b []byte) error {
-	var rawFigure map[string][]*Vertice
+	var rawFigure map[string][]*Vertex
 	if err := json.Unmarshal(b, &rawFigure); err != nil {
 		return err
 	}

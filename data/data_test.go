@@ -2,8 +2,9 @@ package data
 
 import (
 	"fmt"
-	"gotest.tools/assert"
 	"testing"
+
+	"gotest.tools/assert"
 )
 
 func TestEdge_Line(t *testing.T) {
@@ -41,7 +42,7 @@ func TestEdge_Line(t *testing.T) {
 		},
 	} {
 		t.Run(fmt.Sprintf("%f*x + %f*y + %f = 0", tcase.a, tcase.b, tcase.c), func(t *testing.T) {
-			a, b, c := (&Edge{A: &Vertice{X: tcase.x1, Y: tcase.y1}, B: &Vertice{X: tcase.x2, Y: tcase.y2}}).Line()
+			a, b, c := (&Edge{A: &Vertex{X: tcase.x1, Y: tcase.y1}, B: &Vertex{X: tcase.x2, Y: tcase.y2}}).Line()
 			assert.Equal(t, a, tcase.a)
 			assert.Equal(t, b, tcase.b)
 			assert.Equal(t, c, tcase.c)
