@@ -11,12 +11,12 @@ type Edge struct {
 }
 
 type Hole struct {
-	Vertices []Vertice
+	Vertices []*Vertice
 }
 
 type Figure struct {
-	Vertices []Vertice
-	Edges    []Edge
+	Vertices []*Vertice
+	Edges    []*Edge
 }
 
 func (e Edge) SqLength() float64 {
