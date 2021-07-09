@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"unsafe"
 )
 
 type Vertex struct {
@@ -28,7 +29,7 @@ type Hole struct {
 }
 
 type Figure struct {
-	Vertices []*Vertex
+	Vertices []Vertex
 	Edges    []*Edge
 }
 
@@ -90,7 +91,7 @@ func (h *Hole) UnmarshalJSON(b []byte) error {
 }
 
 func (f *Figure) UnmarshalJSON(b []byte) error {
-	var rawFigure map[string][]*Vertex
+	var rawFigure map[string][]Vertex
 	if err := json.Unmarshal(b, &rawFigure); err != nil {
 		return err
 	}
@@ -107,10 +108,33 @@ func (f *Figure) UnmarshalJSON(b []byte) error {
 
 	for _, e := range edges {
 		f.Edges = append(f.Edges, &Edge{
-			A: vertices[e.X],
-			B: vertices[e.Y],
+			A: &vertices[e.X],
+			B: &vertices[e.Y],
 		})
 	}
 	f.Vertices = vertices
 	return nil
+}
+
+// Copy makes a deep copy of the original Figure. No pointer are overlaping from f to c afterwards.
+func (f Figure) Copy() (c Figure) {
+	c.Vertices = make([]Vertex, len(f.Vertices))
+	c.Edges = make([]*Edge, len(f.Edges))
+
+	for i, v := range f.Vertices {
+		c.Vertices[i] = v
+	}
+
+	for i, e := range f.Edges {
+		// Translate target vertices addresses from f.Vertices array address to c.Vertices array
+		// It will point to the same index in the new array
+		edge := Edge{
+			A: (*Vertex)(unsafe.Pointer(uintptr(unsafe.Pointer(e.A)) - uintptr(unsafe.Pointer(&f.Vertices[0])) + uintptr(unsafe.Pointer(&c.Vertices[0])))),
+			B: (*Vertex)(unsafe.Pointer(uintptr(unsafe.Pointer(e.B)) - uintptr(unsafe.Pointer(&f.Vertices[0])) + uintptr(unsafe.Pointer(&c.Vertices[0])))),
+		}
+
+		c.Edges[i] = &edge
+	}
+
+	return c
 }
