@@ -4,7 +4,14 @@ import (
 	"github.com/roman-mazur/icfpc-2021/data"
 )
 
-func Fold(figure data.Figure, edge *data.Edge) data.Figure {
+type FoldDirection byte
+const (
+	FoldRight FoldDirection = iota
+	FoldLeft
+)
+
+func Fold(figure data.Figure, edge *data.Edge, dir FoldDirection) data.Figure {
+	// Line: y=k*x+b
 	// TODO
 	return figure
 }
