@@ -19,7 +19,7 @@ func TestFold(t *testing.T) {
 		var f data.Figure
 		_ = f.UnmarshalJSON([]byte(twoSquares))
 		t.Log(f)
-		Fold(f, &data.Edge{A: f.Vertices[3], B: f.Vertices[2]}, FoldRight)
+		Fold(f, &data.Edge{A: &f.Vertices[3], B: &f.Vertices[2]}, FoldRight)
 		t.Log(f)
 		assert.Equal(t, f.Vertices[4].X, 0)
 		assert.Equal(t, f.Vertices[4].Y, 0)
@@ -31,7 +31,7 @@ func TestFold(t *testing.T) {
 		var f data.Figure
 		_ = f.UnmarshalJSON([]byte(twoSquares))
 		t.Log(f)
-		Fold(f, &data.Edge{A: f.Vertices[1], B: f.Vertices[3]}, FoldRight)
+		Fold(f, &data.Edge{A: &f.Vertices[1], B: &f.Vertices[3]}, FoldRight)
 		t.Log(f)
 		assert.Equal(t, f.Vertices[0].X, 2)
 		assert.Equal(t, f.Vertices[0].Y, 0)
@@ -57,7 +57,7 @@ func TestFold(t *testing.T) {
 		var f data.Figure
 		_ = f.UnmarshalJSON([]byte(square))
 		t.Log(f)
-		Fold(f, &data.Edge{A: f.Vertices[0], B: f.Vertices[3]}, FoldRight)
+		Fold(f, &data.Edge{A: &f.Vertices[0], B: &f.Vertices[3]}, FoldRight)
 		t.Log(f)
 		assert.Equal(t, f.Vertices[0].X, 0)
 		assert.Equal(t, f.Vertices[0].Y, 0)

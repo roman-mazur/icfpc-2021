@@ -19,7 +19,7 @@ const eps = 0.000001
 // TODO: Figure out how to copy figures.
 func Fold(figure data.Figure, edge *data.Edge, dir FoldDirection) {
 	a, b, c := edge.Line()
-	for _, v := range figure.Vertices {
+	for i, v := range figure.Vertices {
 		var diff float64
 		if a != 0 {
 			diff = (b*float64(v.Y)+c)/(-a) - float64(v.X)
@@ -57,8 +57,8 @@ func Fold(figure data.Figure, edge *data.Edge, dir FoldDirection) {
 			}
 
 			// Finally flip the point.
-			v.X = int(2*ix - float64(v.X))
-			v.Y = int(2*iy - float64(v.Y))
+			figure.Vertices[i].X = int(2*ix - float64(v.X))
+			figure.Vertices[i].Y = int(2*iy - float64(v.Y))
 		}
 	}
 }
