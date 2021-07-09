@@ -24,9 +24,9 @@ func Fold(figure data.Figure, edge *data.Edge, dir FoldDirection) {
 			// On the line, not touching.
 			continue
 		}
-		actual := FoldLeft
+		actual := FoldRight
 		if eq > 0 {
-			actual = FoldRight
+			actual = FoldLeft
 		}
 		if actual != dir {
 			// It has to be flipped.
