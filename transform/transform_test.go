@@ -1,8 +1,8 @@
 package transform
 
 import (
-	"fmt"
 	"github.com/roman-mazur/icfpc-2021/data"
+	"gotest.tools/assert"
 	"testing"
 )
 
@@ -14,6 +14,12 @@ func TestFold(t *testing.T) {
 }
 `
 	var f data.Figure
-	f.UnmarshalJSON([]byte(twoSquares))
-	fmt.Println(f)
+	_ = f.UnmarshalJSON([]byte(twoSquares))
+	t.Log(f)
+	Fold(f, &data.Edge{A: f.Vertices[3], B: f.Vertices[2]}, FoldRight)
+	t.Log(f)
+	assert.Equal(t, f.Vertices[4].X, 0)
+	assert.Equal(t, f.Vertices[4].Y, 0)
+	assert.Equal(t, f.Vertices[5].X, 1)
+	assert.Equal(t, f.Vertices[5].Y, 0)
 }
