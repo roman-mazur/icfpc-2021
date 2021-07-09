@@ -11,8 +11,16 @@ type Vertice struct {
 	X, Y int
 }
 
+func (v *Vertice) String() string {
+	return fmt.Sprintf("(%d,%d)", v.X, v.Y)
+}
+
 type Edge struct {
 	A, B *Vertice
+}
+
+func (e *Edge) String() string {
+	return fmt.Sprintf("[%s->%s]", e.A, e.B)
 }
 
 type Hole struct {
