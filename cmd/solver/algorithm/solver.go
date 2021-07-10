@@ -9,21 +9,25 @@ import (
 
 var GenerationSize = 64
 
-type Generation []struct {
+type GenerationItem struct {
 	Figure data.Figure
 	Score  float64
 }
 
+type Generation []GenerationItem
+
 func newGeneration(orig data.Figure, h data.Hole, ε, size int) Generation {
-	gen := make(Generation, size)
+	gen := make(Generation, 0, size)
 
 	for i := 0; i < size; i++ {
-		gen[i].Figure = orig.Copy()
-
-		for valid := false; !valid; valid = gen[i].Figure.IsValid(orig, ε) {
-			randomAlter(&gen[i].Figure)
+		candidate := orig.Copy()
+		randomAlter(&candidate)
+		if candidate.IsValid(orig, ε) {
+			gen = append(gen, GenerationItem{
+				Figure: candidate,
+				Score:  fitness.FitScore(candidate, h),
+			})
 		}
-		gen[i].Score = fitness.FitScore(gen[i].Figure, h)
 	}
 
 	sort.Slice(gen, func(i, j int) bool {
