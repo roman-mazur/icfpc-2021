@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -26,7 +27,7 @@ func main() {
 	pb.Figure = algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, 10)
 	gfx.DrawEdges(
 		pixelgl.WindowConfig{
-			Title:  "Hello ICFP Contest!",
+			Title:  filepath.Base(os.Args[1]),
 			Bounds: pixel.R(0, 0, 1000, 800),
 		},
 		pb.Hole.Edges,
