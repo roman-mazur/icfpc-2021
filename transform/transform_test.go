@@ -126,7 +126,7 @@ func TestRotate(t *testing.T) {
 	})
 }
 
-func TestSolveAnt(t *testing.T) {
+func TestFoldAnt(t *testing.T) {
 	f, err := os.Open("testdata/ant.problem")
 	if err != nil {
 		t.Fatal(err)
@@ -140,5 +140,24 @@ func TestSolveAnt(t *testing.T) {
 	Fold(p.Figure, p.Figure.Edges[37], FoldRight)
 	assert.Equal(t, p.Figure.IsValid(original, p.Epsilon), true)
 	Fold(p.Figure, p.Figure.Edges[4], FoldLeft)
+	assert.Equal(t, p.Figure.IsValid(original, p.Epsilon), true)
+}
+
+func TestFoldKorgi(t *testing.T) {
+	f, err := os.Open("testdata/korgi.problem")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var p data.Problem
+	err = json.NewDecoder(f).Decode(&p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	original := p.Figure.Copy()
+	Fold(p.Figure, p.Figure.Edges[27], FoldRight)
+	assert.Equal(t, p.Figure.IsValid(original, p.Epsilon), true)
+	Fold(p.Figure, p.Figure.Edges[3], FoldLeft)
+	assert.Equal(t, p.Figure.IsValid(original, p.Epsilon), true)
+	Fold(p.Figure, p.Figure.Edges[30], FoldLeft)
 	assert.Equal(t, p.Figure.IsValid(original, p.Epsilon), true)
 }
