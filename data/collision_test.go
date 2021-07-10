@@ -124,3 +124,47 @@ func TestContains(t *testing.T) {
 		)
 	}
 }
+
+func TestFigureFits(t *testing.T) {
+	type test struct {
+		hole   Hole
+		figure Figure
+		expect bool
+	}
+
+	bigHole := Hole{
+		Vertices: []Vertex{
+			Vertex{0, 0},
+			Vertex{1000, 0},
+			Vertex{1000, 1000},
+			Vertex{0, 1000},
+		},
+	}
+	bigHole.FillEdges()
+
+	smallHole := Hole{
+		Vertices: []Vertex{v00, v10, v11, v01},
+	}
+	smallHole.FillEdges()
+
+	line := []Vertex{Vertex{10, 10}, Vertex{-10, -10}}
+	lineFigure := Figure{Vertices: line, Edges: []*Edge{&Edge{A: &line[0], B: &line[1]}}}
+
+	smallFigure := Figure{Vertices: smallHole.Vertices, Edges: smallHole.Edges}
+	bigFigure := Figure{Vertices: bigHole.Vertices, Edges: bigHole.Edges}
+
+	var suite = []test{
+		test{bigHole, smallFigure, true},
+		test{smallHole, bigFigure, false},
+		test{smallHole, lineFigure, false},
+	}
+
+	for i, test := range suite {
+		t.Run(
+			fmt.Sprintf("figure-fits-%d-%v", i, test.expect),
+			func(t *testing.T) {
+				assert.Assert(t, test.figure.Fits(test.hole) == test.expect)
+			},
+		)
+	}
+}
