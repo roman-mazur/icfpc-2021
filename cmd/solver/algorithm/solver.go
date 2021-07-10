@@ -2,7 +2,6 @@ package algorithm
 
 import (
 	"sort"
-	"sync"
 
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/fitness"
@@ -10,30 +9,26 @@ import (
 
 var GenerationSize = 4
 
-type Generation []struct {
+type GenerationItem struct {
 	Figure data.Figure
 	Score  float64
 }
 
-func newGeneration(orig data.Figure, h data.Hole, ε, size int) Generation {
-	gen := make(Generation, size)
+type Generation []GenerationItem
 
-	wg := sync.WaitGroup{}
-	wg.Add(size)
+func newGeneration(orig data.Figure, h data.Hole, ε, size int) Generation {
+	gen := make(Generation, 0, size)
 
 	for i := 0; i < size; i++ {
-		go (func(i int) {
-			defer wg.Done()
-			gen[i].Figure = orig.Copy()
-
-			for valid := false; !valid; valid = gen[i].Figure.IsValid(orig, ε) {
-				randomAlter(&gen[i].Figure)
-			}
-			gen[i].Score = fitness.FitScore(gen[i].Figure, h)
-		})(i)
+		candidate := orig.Copy()
+		randomAlter(&candidate)
+		if candidate.IsValid(orig, ε) {
+			gen = append(gen, GenerationItem{
+				Figure: candidate,
+				Score:  fitness.FitScore(candidate, h),
+			})
+		}
 	}
-
-	wg.Wait()
 
 	sort.Slice(gen, func(i, j int) bool {
 		return gen[i].Score < gen[j].Score
