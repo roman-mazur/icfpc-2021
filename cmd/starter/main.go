@@ -24,7 +24,7 @@ func main() {
 	pb := data.ParseProblem(os.Args[1])
 	gfx.DrawProblem(pixelgl.WindowConfig{
 		Title:  "Hello ICFP Contest!",
-		Bounds: pixel.R(0, 0, 800, 600),
+		Bounds: pixel.R(0, 0, 1000, 800),
 	}, pb)
 
 	fmt.Print(pb)

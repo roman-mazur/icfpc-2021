@@ -8,7 +8,10 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-var k = 6.0 // temp scale
+var (
+	k         = 6.0 // temp scale
+	posMatrix = pixel.IM.Moved(pixel.V(0, -5))
+)
 
 func DrawProblem(cfg pixelgl.WindowConfig, pb *data.Problem) {
 	pixelgl.Run(func() {
@@ -28,15 +31,21 @@ func DrawProblem(cfg pixelgl.WindowConfig, pb *data.Problem) {
 	})
 }
 
+func newDraw() *imdraw.IMDraw {
+	res := imdraw.New(nil)
+	res.SetMatrix(posMatrix)
+	return res
+}
+
 func drawHole(hole *data.Hole) *imdraw.IMDraw {
-	imd := imdraw.New(nil)
+	imd := newDraw()
 	imd.SetColorMask(pixel.RGB(0.8, 0.8, 0.8))
 	drawEdges(imd, hole.Edges, 2)
 	return imd
 }
 
 func drawFigure(f *data.Figure) *imdraw.IMDraw {
-	imd := imdraw.New(nil)
+	imd := newDraw()
 	imd.SetColorMask(pixel.RGB(1.0, 0, 0))
 	drawEdges(imd, f.Edges, 5)
 	return imd
