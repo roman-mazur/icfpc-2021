@@ -21,7 +21,7 @@ func DrawProblem(cfg pixelgl.WindowConfig, pb *data.Problem) {
 			win.Clear(colornames.Gray)
 
 			drawHole(win, pb.Hole)
-			drawFigure(win, pb.Figure)
+			drawFigure(win, pb.Figure.Edges)
 
 			win.Update()
 		}
@@ -29,29 +29,34 @@ func DrawProblem(cfg pixelgl.WindowConfig, pb *data.Problem) {
 }
 
 func drawHole(win *pixelgl.Window, h *data.Hole) {
-	imd := imdraw.New(nil)
-	imd.Color = pixel.RGB(0.8, 0.8, 0.8)
+	imd := newIMDrawWithEdges(h.Edges)
 
-	for _, v := range h.Vertices {
-		imd.Push(pixel.V(float64(v.X)*k, float64(v.Y)*k))
-	}
-
-	// We add the first point again to close the drawing
-	imd.Push(pixel.V(float64(h.Vertices[0].X)*k, float64(h.Vertices[0].Y)*k))
-	// imd.Polygon(0)
+	imd.SetColorMask(pixel.RGB(0.8, 0.8, 0.8))
 	imd.Line(2)
 	imd.Draw(win)
 }
 
-func drawFigure(win *pixelgl.Window, fig *data.Figure) {
-	imd := imdraw.New(nil)
-	imd.Color = pixel.RGB(1.0, 0, 0)
+func drawFigure(win *pixelgl.Window, edges []*data.Edge) {
+	imd := newIMDrawWithEdges(edges)
 
-	for _, v := range fig.Vertices {
-		imd.Push(pixel.V(float64(v.X)*k, float64(v.Y)*k))
+	imd.SetColorMask(pixel.RGB(1.0, 0, 0))
+	imd.Line(5)
+	imd.Draw(win)
+}
+
+func newIMDrawWithEdges(edges []*data.Edge) *imdraw.IMDraw {
+	imd := imdraw.New(nil)
+
+	for _, e := range edges {
+		imd.Push(
+			pixel.V(
+				float64(e.A.X)*k,  // x1
+				float64(e.A.Y)*k), // y1
+			pixel.V(
+				float64(e.B.X)*k,  // x2
+				float64(e.B.Y)*k), // y2
+		)
 	}
 
-	// imd.Line(2)
-	imd.Circle(1, 3)
-	imd.Draw(win)
+	return imd
 }
