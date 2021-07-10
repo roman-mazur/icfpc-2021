@@ -91,7 +91,7 @@ type Unfit struct {
 	Unfits []*Vertex
 }
 
-func (f Figure) ListUnfits(h Hole) (list []Unfit) {
+func (f Figure) ListUnfits(h *Hole) (list []Unfit) {
 	list = make([]Unfit, 0, len(f.Edges))
 
 	for _, e := range f.Edges {
