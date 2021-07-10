@@ -4,39 +4,19 @@ func (v Vertex) Equal(with Vertex) bool {
 	return v.X == with.X && v.Y == with.Y
 }
 
-// Intersect returns true if with intersects with the given Edge.
+// Intersect returns true if given Edge intersects with w.
 // It implements a linear equation resolution algorithm.
-// More details: https://stackoverflow.com/questions/4977491/determining-if-two-line-segments-intersect/4977569#4977569
-func (e Edge) Intersect(with Edge) bool {
-	// Converts edge (origin, destination Vertex) into vectors (origin, vector Vertex)
-	vecE := Vertex{e.B.X - e.A.X, e.B.Y - e.A.Y}
-	vecW := Vertex{with.B.X - with.A.X, with.B.Y - with.A.Y}
-
-	// Check if first vertices collides
-	if e.A.Equal(*with.A) {
-		return true
-	}
-
-	// Compute matrix determinent
-	det := float64(vecW.X*vecE.Y - vecE.X*vecW.Y)
-	if det == 0 {
-		// Lines are parallel, no possible collision
-		return false
-	}
-
-	// Compute lines intersection
-	s := 1 / det * float64((e.A.X-with.A.X)*vecE.Y-(e.A.Y-with.A.Y)*vecE.X)
-	t := 1 / det * float64(((0 - (e.A.X-with.A.X)*vecW.Y) - (e.A.Y-with.A.Y)*vecW.X))
-
-	// Check if collision happens inside segments bounds
-	if t >= 0 &&
-		t <= 1 &&
-		s >= 0 &&
-		s <= 1 {
-		return true
-	}
-
-	return false
+// More details: https://izziswift.com/how-can-i-check-if-two-segments-intersect/
+func (e Edge) Intersect(w Edge) bool {
+	dx0 := e.B.X - e.A.X
+	dx1 := w.B.X - w.A.X
+	dy0 := e.B.Y - e.A.Y
+	dy1 := w.B.Y - w.A.Y
+	p0 := dy1*(w.B.X-e.A.X) - dx1*(w.B.Y-e.A.Y)
+	p1 := dy1*(w.B.X-e.B.X) - dx1*(w.B.Y-e.B.Y)
+	p2 := dy0*(e.B.X-w.A.X) - dx0*(e.B.Y-w.A.Y)
+	p3 := dy0*(e.B.X-w.B.X) - dx0*(e.B.Y-w.B.Y)
+	return (p0*p1 <= 0) && (p2*p3 <= 0)
 }
 
 // Contains returns true if v is contained in the given Hole.

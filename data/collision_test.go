@@ -39,13 +39,13 @@ func TestIntersect(t *testing.T) {
 		test{newEdge(v00, v12), newEdge(v02, v20), true},
 		test{newEdge(v10, v10), newEdge(v10, v22), true},
 		test{newEdge(v10, v12), newEdge(v00, v20), true},
-		//test{newEdge(v01, v21), newEdge(v11, v20), true},
-		//test{newEdge(v01, v21), newEdge(v11, v10), true},
-		//test{newEdge(v01, v21), newEdge(v11, v12), true},
+		test{newEdge(v01, v21), newEdge(v11, v20), true},
+		test{newEdge(v01, v21), newEdge(v11, v10), true},
+		test{newEdge(v01, v21), newEdge(v11, v12), true},
+		test{newEdge(v00, v20), newEdge(v20, v22), true},
 		test{newEdge(v00, v10), newEdge(v02, v20), false},
-		test{newEdge(v00, v20), newEdge(v20, v22), false},
 		test{newEdge(v01, v10), newEdge(v11, v21), false},
-		test{newEdge(v10, v10), newEdge(v02, v20), false}, // Considers parallel
+		test{newEdge(v10, v10), newEdge(v02, v20), false}, // Collinear
 	}
 
 	for _, test := range suite {
@@ -84,7 +84,7 @@ func TestContains(t *testing.T) {
 	hole.FillEdges()
 
 	var suite = []test{
-		//test{hole, v11, true},
+		test{hole, v11, true},
 		test{hole, v00, false},
 	}
 
