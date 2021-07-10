@@ -25,7 +25,7 @@ func (e Edge) Intersect(w Edge) bool {
 // It is inspired by the concave polygon collision described here: http://www.alienryderflex.com/polygon/
 func (h Hole) Contains(v Vertex) bool {
 	// MAX_BOUND defines an approximatively infinite ray coming from the vertex
-	const MAX_BOUND = 1000000000
+	const MAX_BOUND = 10000000
 
 	leftLine := Edge{
 		A: &Vertex{X: 0 - MAX_BOUND, Y: v.Y},
@@ -44,6 +44,15 @@ func (h Hole) Contains(v Vertex) bool {
 		}
 		if rightLine.Intersect(*e) {
 			rightCollisionCount++
+		}
+	}
+	for _, hv := range h.Vertices {
+		if hv.Y == v.Y {
+			if hv.X < v.X {
+				leftCollisionCount--
+			} else {
+				rightCollisionCount--
+			}
 		}
 	}
 
