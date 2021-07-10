@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	"log"
 	"sort"
 
 	"github.com/roman-mazur/icfpc-2021/data"
@@ -16,17 +17,20 @@ type GenerationItem struct {
 
 type Generation []GenerationItem
 
-func newGeneration(orig data.Figure, h data.Hole, ε, size int) Generation {
+func newGeneration(orig data.Figure, h data.Hole, ε, size, iter int) Generation {
 	gen := make(Generation, 0, size)
 
 	for i := 0; i < size; i++ {
 		candidate := orig.Copy()
-		randomAlter(&candidate)
+		applied := randomAlter(&candidate, ε)
 		if candidate.IsValid(orig, ε) {
+			log.Println(iter, " valid ", applied)
 			gen = append(gen, GenerationItem{
 				Figure: candidate,
 				Score:  fitness.FitScore(candidate, h),
 			})
+		} else {
+			log.Println(iter, " INVALID ", applied)
 		}
 	}
 
@@ -38,10 +42,13 @@ func newGeneration(orig data.Figure, h data.Hole, ε, size int) Generation {
 }
 
 func Solve(f data.Figure, h data.Hole, ε, iter int) *data.Figure {
-	generation := newGeneration(f, h, ε, GenerationSize)
-
-	if len(generation) == 0 {
-		return nil
+	base := f
+	for i := 0; i < iter; i++ {
+		generation := newGeneration(f, h, ε, GenerationSize, i)
+		if len(generation) == 0 {
+			return nil
+		}
+		base = generation[0].Figure
 	}
-	return &generation[0].Figure
+	return &base
 }

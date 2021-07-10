@@ -1,12 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/roman-mazur/icfpc-2021/cmd"
 	"github.com/roman-mazur/icfpc-2021/cmd/solver/algorithm"
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/gfx"
@@ -23,11 +24,19 @@ func main() {
 	}
 
 	pb := data.ParseProblem(os.Args[1])
+	original := pb.Figure.Copy()
 	pb.Figure = algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, 10)
-	gfx.DrawProblem(pixelgl.WindowConfig{
-		Title:  "Hello ICFP Contest!",
-		Bounds: pixel.R(0, 0, 1000, 800),
-	}, pb)
 
-	fmt.Print(pb)
+	unfit := cmd.Analyze(pb, original, true)
+
+	gfx.DrawEdges(
+		pixelgl.WindowConfig{
+			Title:  filepath.Base(os.Args[1]),
+			Bounds: pixel.R(0, 0, 1000, 800),
+		},
+		pb.Hole.Edges,
+		original.Edges,
+		pb.Figure.Edges,
+		unfit,
+	)
 }
