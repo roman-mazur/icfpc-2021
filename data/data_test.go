@@ -40,6 +40,10 @@ func TestEdge_Line(t *testing.T) {
 			x1: 5, y1: 5, x2: 5, y2: 10,
 			a: 1, b: 0, c: -5,
 		},
+		{
+			x1: 1, y1: 0, x2: 1, y2: 1,
+			a: 1, b: 0, c: -1,
+		},
 	} {
 		t.Run(fmt.Sprintf("%f*x + %f*y + %f = 0", tcase.a, tcase.b, tcase.c), func(t *testing.T) {
 			a, b, c := (&Edge{A: &Vertex{X: tcase.x1, Y: tcase.y1}, B: &Vertex{X: tcase.x2, Y: tcase.y2}}).Line()
@@ -62,6 +66,7 @@ func TestFigure_UnmarshalJSON(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
+	t.Log(f)
 	assert.Equal(t, len(f.Vertices), 6)
 	assert.Equal(t, len(f.Edges), 7)
 }
