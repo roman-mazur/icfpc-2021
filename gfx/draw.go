@@ -1,16 +1,20 @@
 package gfx
 
 import (
+	"fmt"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 	"github.com/roman-mazur/icfpc-2021/data"
 	"golang.org/x/image/colornames"
+	"golang.org/x/image/font/basicfont"
 )
 
 var (
 	k         = 6.0 // temp scale
-	marginTop = 6.0
+	posMatrix = pixel.IM.Moved(pixel.V(0, -5))
 
 	colors = []pixel.RGBA{
 		pixel.RGB(0.8, 0.8, 0.8),
@@ -30,18 +34,6 @@ func drawInWindow(cfg pixelgl.WindowConfig, drawFunc func(window *pixelgl.Window
 			panic(err)
 		}
 
-		// Trick to invert origin
-		win.SetMatrix(
-			pixel.IM.ScaledXY(
-				pixel.V(0, 0),
-				pixel.V(1, -1),
-			).Chained(
-				pixel.IM.Moved(
-					pixel.V(0, win.Bounds().H()+marginTop),
-				),
-			),
-		)
-
 		for !win.Closed() {
 			win.Clear(colornames.Gray)
 			drawFunc(win)
@@ -54,6 +46,7 @@ func DrawProblem(cfg pixelgl.WindowConfig, pb *data.Problem) {
 	drawInWindow(cfg, func(win *pixelgl.Window) {
 		drawHole(pb.Hole).Draw(win)
 		drawFigure(pb.Figure).Draw(win)
+		drawEdgeNums(win, pb.Figure.Edges)
 	})
 }
 
@@ -74,6 +67,7 @@ func DrawEdges(cfg pixelgl.WindowConfig, edges ...[]*data.Edge) {
 
 func newDraw() *imdraw.IMDraw {
 	res := imdraw.New(nil)
+	res.SetMatrix(posMatrix)
 	return res
 }
 
@@ -94,14 +88,22 @@ func drawFigure(f *data.Figure) *imdraw.IMDraw {
 func drawEdges(imd *imdraw.IMDraw, edges []*data.Edge, thickness float64) {
 	for _, e := range edges {
 		imd.Push(
-			pixel.V(
-				float64(e.A.X)*k,  // x1
-				float64(e.A.Y)*k), // y1
-			pixel.V(
-				float64(e.B.X)*k,  // x2
-				float64(e.B.Y)*k), // y2
+			e.A.PVec().Scaled(k),
+			e.B.PVec().Scaled(k),
 		)
+
 		imd.Line(thickness)
 		imd.Reset()
+	}
+}
+
+func drawEdgeNums(win *pixelgl.Window, edges []*data.Edge) {
+	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
+
+	for i, e := range edges {
+		txt := text.New(e.PLine().Center().Scaled(k), atlas)
+
+		fmt.Fprintf(txt, "%d", i)
+		txt.Draw(win, pixel.IM)
 	}
 }

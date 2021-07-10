@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math"
 	"unsafe"
+
+	"github.com/faiface/pixel"
 )
 
 type Vertex struct {
@@ -165,4 +167,14 @@ func (f Figure) Copy() (c Figure) {
 	}
 
 	return c
+}
+
+// pixel library data binding
+
+func (v *Vertex) PVec() pixel.Vec {
+	return pixel.V(float64(v.X), float64(v.Y))
+}
+
+func (e *Edge) PLine() pixel.Line {
+	return pixel.L(e.A.PVec(), e.B.PVec())
 }
