@@ -88,12 +88,8 @@ func drawFigure(f *data.Figure) *imdraw.IMDraw {
 func drawEdges(imd *imdraw.IMDraw, edges []*data.Edge, thickness float64) {
 	for _, e := range edges {
 		imd.Push(
-			pixel.V(
-				float64(e.A.X)*k,  // x1
-				float64(e.A.Y)*k), // y1
-			pixel.V(
-				float64(e.B.X)*k,  // x2
-				float64(e.B.Y)*k), // y2
+			e.A.PVec().Scaled(k),
+			e.B.PVec().Scaled(k),
 		)
 
 		imd.Line(thickness)
@@ -105,14 +101,9 @@ func drawEdgeNums(win *pixelgl.Window, edges []*data.Edge) {
 	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
 	for i, e := range edges {
-		line := pixel.L(
-			pixel.V(float64(e.A.X)*k, float64(e.A.Y)*k),
-			pixel.V(float64(e.B.X)*k, float64(e.B.Y)*k),
-		)
+		txt := text.New(e.PLine().Center().Scaled(k), atlas)
 
-		txt := text.New(line.Center(), atlas)
 		fmt.Fprintf(txt, "%d", i)
-
 		txt.Draw(win, pixel.IM)
 	}
 }
