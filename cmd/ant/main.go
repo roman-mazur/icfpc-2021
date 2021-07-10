@@ -24,7 +24,7 @@ func main() {
 	transform.Rotate(pb.Figure.Edges[36], math.Pi)
 	transform.Rotate(pb.Figure.Edges[24], math.Pi*0.4)
 
-	unfitEdges := cmd.Analyze(pb, original)
+	unfitEdges := cmd.Analyze(pb, original, true)
 
 	cmd.WriteSolution(pb.Figure.Solution(), 3)
 
