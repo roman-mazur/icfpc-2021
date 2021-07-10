@@ -77,7 +77,9 @@ func DrawEdges(cfg pixelgl.WindowConfig, edges ...[]*data.Edge) {
 			}
 			drawEdges(imd, e, thickness)
 			imd.Draw(win)
-			drawEdgeNums(win, e)
+		}
+		if len(edges) > 1 {
+			drawEdgeNums(win, edges[1])
 		}
 	})
 }
