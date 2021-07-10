@@ -7,6 +7,7 @@ import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/roman-mazur/icfpc-2021/data"
+	"github.com/roman-mazur/icfpc-2021/fitness"
 	"github.com/roman-mazur/icfpc-2021/gfx"
 	"github.com/roman-mazur/icfpc-2021/transform"
 )
@@ -24,7 +25,7 @@ func main() {
 		log.Fatal("incorrect figure")
 	}
 
-	unfits := pb.Figure.ListUnfits(pb.Hole)
+	unfits := fitness.ListUnfits(*pb.Figure, *pb.Hole)
 	unfitEdges := make([]*data.Edge, len(unfits))
 	for i, unfit := range unfits {
 		unfitEdges[i] = unfit.Edge

@@ -38,16 +38,16 @@ func TestIntersect(t *testing.T) {
 	var suite = []test{
 		test{newEdge(v00, v22), newEdge(v02, v20), true},
 		test{newEdge(v00, v12), newEdge(v02, v20), true},
-		test{newEdge(v10, v10), newEdge(v10, v22), true},
-		test{newEdge(v10, v12), newEdge(v00, v20), true},
-		test{newEdge(v01, v21), newEdge(v11, v20), true},
-		test{newEdge(v01, v21), newEdge(v11, v10), true},
-		test{newEdge(v01, v21), newEdge(v11, v12), true},
-		test{newEdge(v00, v20), newEdge(v20, v22), true},
-		test{newEdge(v10, v20), newEdge(v10, v20), true}, // Collinear, but share points
+		test{newEdge(v10, v12), newEdge(v00, v20), false}, // Touch, not intersect
+		test{newEdge(v01, v21), newEdge(v11, v20), false}, // Touch, not intersect
+		test{newEdge(v01, v21), newEdge(v11, v10), false}, // Touch, not intersect
+		test{newEdge(v01, v21), newEdge(v11, v12), false}, // Touch, not intersect
+		test{newEdge(v00, v20), newEdge(v20, v22), false}, // Touch, not intersect
 		test{newEdge(v00, v10), newEdge(v02, v20), false},
 		test{newEdge(v01, v10), newEdge(v11, v21), false},
+		test{newEdge(v10, v20), newEdge(v10, v20), false}, // Collinear
 		test{newEdge(v10, v10), newEdge(v02, v20), false}, // Collinear
+		test{newEdge(v10, v10), newEdge(v10, v22), false}, // Collinear
 		test{newEdge(Vertex{-1000000, 0}, v00), newEdge(v12, v01), false},
 	}
 
@@ -123,50 +123,6 @@ func TestContains(t *testing.T) {
 			fmt.Sprintf("hole-contains-(%d,%d)-%v", test.vertex.X, test.vertex.Y, test.expect),
 			func(t *testing.T) {
 				assert.Assert(t, test.hole.Contains(test.vertex) == test.expect)
-			},
-		)
-	}
-}
-
-func TestFigureFits(t *testing.T) {
-	type test struct {
-		hole   Hole
-		figure Figure
-		expect bool
-	}
-
-	bigHole := Hole{
-		Vertices: []Vertex{
-			Vertex{0, 0},
-			Vertex{1000, 0},
-			Vertex{1000, 1000},
-			Vertex{0, 1000},
-		},
-	}
-	bigHole.FillEdges()
-
-	smallHole := Hole{
-		Vertices: []Vertex{v00, v10, v11, v01},
-	}
-	smallHole.FillEdges()
-
-	line := []Vertex{Vertex{10, 10}, Vertex{-10, -10}}
-	lineFigure := Figure{Vertices: line, Edges: []*Edge{&Edge{A: &line[0], B: &line[1]}}}
-
-	smallFigure := Figure{Vertices: smallHole.Vertices, Edges: smallHole.Edges}
-	bigFigure := Figure{Vertices: bigHole.Vertices, Edges: bigHole.Edges}
-
-	var suite = []test{
-		test{bigHole, smallFigure, true},
-		test{smallHole, bigFigure, false},
-		test{smallHole, lineFigure, false},
-	}
-
-	for i, test := range suite {
-		t.Run(
-			fmt.Sprintf("figure-fits-%d-%v", i, test.expect),
-			func(t *testing.T) {
-				assert.Assert(t, test.figure.Fits(test.hole) == test.expect)
 			},
 		)
 	}

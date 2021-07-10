@@ -4,10 +4,36 @@ func (v Vertex) Equal(with Vertex) bool {
 	return v.X == with.X && v.Y == with.Y
 }
 
-// Intersect returns true if given Edge intersects with w.
+// Intersect returns true if given Edge intersects with w. It returns false if edges are collinear (even if they touch)
+// See func (Edge) Touch(Edge)
 // It implements a linear equation resolution algorithm.
 // More details: https://izziswift.com/how-can-i-check-if-two-segments-intersect/
 func (e Edge) Intersect(w Edge) bool {
+	dx0 := e.B.X - e.A.X
+	dx1 := w.B.X - w.A.X
+	dy0 := e.B.Y - e.A.Y
+	dy1 := w.B.Y - w.A.Y
+
+	// We do not want collinear edges to intersect anyway
+	if (dx0 == 0 && dx1 == 0) || (dx1 != 0 && float64(dx0*dy1)/float64(dx1) == float64(dy0)) {
+		return false
+	}
+
+	// If points match, it does not intersect
+	if e.A.Equal(*w.A) || e.A.Equal(*w.B) ||
+		e.B.Equal(*w.A) || e.B.Equal(*w.B) {
+		return false
+	}
+
+	p0 := dy1*(w.B.X-e.A.X) - dx1*(w.B.Y-e.A.Y)
+	p1 := dy1*(w.B.X-e.B.X) - dx1*(w.B.Y-e.B.Y)
+	p2 := dy0*(e.B.X-w.A.X) - dx0*(e.B.Y-w.A.Y)
+	p3 := dy0*(e.B.X-w.B.X) - dx0*(e.B.Y-w.B.Y)
+	return (p0*p1 < 0) && (p2*p3 < 0)
+}
+
+// Touches returns true if given Edge touches with w. It is complementary to func (Edge) Intersect(Edge)
+func (e Edge) Touch(w Edge) bool {
 	dx0 := e.B.X - e.A.X
 	dx1 := w.B.X - w.A.X
 	dy0 := e.B.Y - e.A.Y
@@ -25,7 +51,7 @@ func (e Edge) Intersect(w Edge) bool {
 // It is inspired by the concave polygon collision described here: http://www.alienryderflex.com/polygon/
 func (h Hole) Contains(v Vertex) bool {
 	for _, hv := range h.Vertices {
-		if hv.X == v.X && hv.Y == v.Y {
+		if v.Equal(hv) {
 			return true
 		}
 	}
@@ -45,10 +71,10 @@ func (h Hole) Contains(v Vertex) bool {
 	leftCollisionCount := 0
 	rightCollisionCount := 0
 	for _, e := range h.Edges {
-		if leftLine.Intersect(*e) {
+		if leftLine.Touch(*e) {
 			leftCollisionCount++
 		}
-		if rightLine.Intersect(*e) {
+		if rightLine.Touch(*e) {
 			rightCollisionCount++
 		}
 	}
@@ -71,45 +97,4 @@ func (h Hole) Contains(v Vertex) bool {
 	}
 
 	return false
-}
-
-// Fits returns true if the Figure fits in the given Hole.
-// Could be optimized (for instance, checking if any point of the Figure vertices are in the Hole, and check if no
-// Figure's edges intersect with Hole edges.)
-func (f Figure) Fits(h Hole) bool {
-	for _, v := range f.Vertices {
-		if !h.Contains(v) {
-			return false
-		}
-	}
-
-	return true
-}
-
-type Unfit struct {
-	Edge   *Edge
-	Unfits []*Vertex
-}
-
-func (f Figure) ListUnfits(h *Hole) (list []Unfit) {
-	list = make([]Unfit, 0, len(f.Edges))
-
-	for _, e := range f.Edges {
-		aFits := h.Contains(*e.A)
-		bFits := h.Contains(*e.B)
-
-		if !aFits || !bFits {
-			unfits := make([]*Vertex, 0, 2)
-			if !aFits {
-				unfits = append(unfits, e.A)
-			}
-			if !bFits {
-				unfits = append(unfits, e.B)
-			}
-
-			list = append(list, Unfit{e, unfits})
-		}
-	}
-
-	return
 }
