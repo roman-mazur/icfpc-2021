@@ -2,6 +2,7 @@ package gfx
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
@@ -14,7 +15,7 @@ import (
 
 var (
 	k         = 6.0 // temp scale
-	posMatrix = pixel.IM.Moved(pixel.V(0, -5))
+	marginTop = 6.0
 
 	colors = []pixel.RGBA{
 		pixel.RGB(0.8, 0.8, 0.8),
@@ -34,10 +35,23 @@ func drawInWindow(cfg pixelgl.WindowConfig, drawFunc func(window *pixelgl.Window
 			panic(err)
 		}
 
+		// Trick to invert origin
+		win.SetMatrix(
+			pixel.IM.ScaledXY(
+				pixel.V(0, 0),
+				pixel.V(1, -1),
+			).Chained(
+				pixel.IM.Moved(
+					pixel.V(0, win.Bounds().H()+marginTop),
+				),
+			),
+		)
+
 		for !win.Closed() {
 			win.Clear(colornames.Gray)
 			drawFunc(win)
 			win.Update()
+			time.Sleep(20)
 		}
 	})
 }
@@ -66,9 +80,7 @@ func DrawEdges(cfg pixelgl.WindowConfig, edges ...[]*data.Edge) {
 }
 
 func newDraw() *imdraw.IMDraw {
-	res := imdraw.New(nil)
-	res.SetMatrix(posMatrix)
-	return res
+	return imdraw.New(nil)
 }
 
 func drawHole(hole *data.Hole) *imdraw.IMDraw {
