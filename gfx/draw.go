@@ -25,8 +25,8 @@ var (
 	colors = []pixel.RGBA{
 		pixel.RGB(0.8, 0.8, 0.8),
 		pixel.RGB(1, 0, 0),
-		pixel.RGB(0, 1, 0),
 		pixel.RGB(0, 0, 1),
+		pixel.RGB(0, 1, 0),
 		pixel.RGB(0, 1, 1),
 		pixel.RGB(1, 1, 0),
 		pixel.RGB(0, 0, 0),
