@@ -74,7 +74,7 @@ func TestIntersect(t *testing.T) {
 	}
 }
 
-func TestContains(t *testing.T) {
+func TestContain(t *testing.T) {
 	type test struct {
 		hole   Hole
 		vertex Vertex
@@ -122,7 +122,7 @@ func TestContains(t *testing.T) {
 		t.Run(
 			fmt.Sprintf("hole-contains-(%d,%d)-%v", test.vertex.X, test.vertex.Y, test.expect),
 			func(t *testing.T) {
-				assert.Assert(t, test.hole.Contains(test.vertex) == test.expect)
+				assert.Assert(t, test.hole.Contain(test.vertex) == test.expect)
 			},
 		)
 	}

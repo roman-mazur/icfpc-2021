@@ -7,7 +7,7 @@ import "github.com/roman-mazur/icfpc-2021/data"
 // data.Figure's edges intersect with data.Hole edges.)
 func Fit(f data.Figure, h data.Hole) bool {
 	for _, v := range f.Vertices {
-		if !h.Contains(v) {
+		if !h.Contain(v) {
 			return false
 		}
 	}
@@ -35,8 +35,8 @@ func ListUnfits(f data.Figure, h data.Hole) (list []Unfit) {
 	list = make([]Unfit, 0, len(f.Edges))
 
 	for _, e := range f.Edges {
-		aFits := h.Contains(*e.A)
-		bFits := h.Contains(*e.B)
+		aFits := h.Contain(*e.A)
+		bFits := h.Contain(*e.B)
 
 		if !aFits || !bFits {
 			unfits := make([]*data.Vertex, 0, 2)

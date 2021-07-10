@@ -34,6 +34,12 @@ func (e Edge) Intersect(w Edge) bool {
 
 // Touches returns true if given Edge touches with w. It is complementary to func (Edge) Intersect(Edge)
 func (e Edge) Touch(w Edge) bool {
+	if e.A.Y == w.A.Y && e.A.Y == w.B.Y {
+		return !((w.A.X < e.A.X && w.B.X < e.A.X &&
+			w.A.X < e.B.X && w.B.X < e.B.X) ||
+			(w.A.X > e.A.X && w.B.X > e.A.X &&
+				w.A.X > e.B.X && w.B.X > e.B.X))
+	}
 	dx0 := e.B.X - e.A.X
 	dx1 := w.B.X - w.A.X
 	dy0 := e.B.Y - e.A.Y
@@ -45,11 +51,11 @@ func (e Edge) Touch(w Edge) bool {
 	return (p0*p1 <= 0) && (p2*p3 <= 0)
 }
 
-// Contains returns true if v is contained in the given Hole.
+// Contain returns true if v is contained in the given Hole.
 // It computes the number of collisions with hole's edges, left and right from the given vertex. If it's odd, the
 // vertex is inside. If it's even, the vertex is outside.
 // It is inspired by the concave polygon collision described here: http://www.alienryderflex.com/polygon/
-func (h Hole) Contains(v Vertex) bool {
+func (h Hole) Contain(v Vertex) bool {
 	for _, hv := range h.Vertices {
 		if v.Equal(hv) {
 			return true
