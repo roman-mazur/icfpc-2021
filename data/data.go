@@ -44,7 +44,7 @@ func (f *Figure) GetConnectedEdges(e *Edge) []*Edge {
 		if e == edge {
 			continue
 		}
-		if edge.A == e.A || edge.B == e.A || edge.B == e.B {
+		if edge.A == e.A || edge.B == e.A || edge.B == e.B || edge.A == e.B {
 			res = append(res, edge)
 		}
 	}

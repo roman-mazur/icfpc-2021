@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/roman-mazur/icfpc-2021/data"
@@ -17,7 +19,7 @@ func main() {
 	//	transform.Rotate(pb.Figure.Edges[8], -math.Pi/8)
 
 	if !pb.Figure.IsValid(original, pb.Epsilon) {
-		//log.Fatal("incorrect figure")
+		log.Fatal("incorrect figure")
 	}
 
 	unfits := pb.Figure.ListUnfits(pb.Hole)
@@ -33,7 +35,6 @@ func main() {
 		},
 		pb.Hole.Edges,
 		pb.Figure.Edges,
-		[]*data.Edge{pb.Figure.Edges[8]},
 		unfitEdges,
 		//		[]*data.Edge{original.Edges[9]},
 		//		[]*data.Edge{original.Edges[10]},
