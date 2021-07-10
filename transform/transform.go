@@ -74,8 +74,8 @@ func flipVertex(edge *data.Edge, v *data.Vertex, dir FoldDirection) bool {
 	}
 
 	// Finally flip the point.
-	v.X = int(math.Round(2*ix - float64(v.X)))
-	v.Y = int(math.Round(2*iy - float64(v.Y)))
+	v.X = 2*ix - float64(v.X)
+	v.Y = 2*iy - float64(v.Y)
 	return true
 }
 

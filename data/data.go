@@ -11,15 +11,15 @@ import (
 )
 
 type Vertex struct {
-	X, Y int
+	X, Y float64
 }
 
 func (v Vertex) String() string {
-	return fmt.Sprintf("(%d,%d)", v.X, v.Y)
+	return fmt.Sprintf("(%d,%d)", int(v.X), int(v.Y))
 }
 
 func (v Vertex) MarshalJSON() ([]byte, error) {
-	enc := []int{v.X, v.Y}
+	enc := []float64{v.X, v.Y}
 	return json.Marshal(enc)
 }
 
@@ -117,7 +117,7 @@ func (e Edge) Copy() Edge {
 }
 
 func (v *Vertex) UnmarshalJSON(b []byte) error {
-	var rawVtx []int
+	var rawVtx []float64
 	if err := json.Unmarshal(b, &rawVtx); err != nil {
 		return err
 	}
@@ -185,8 +185,8 @@ func (f *Figure) UnmarshalJSON(b []byte) error {
 	for i, e := range edges {
 		f.Edges[i] = &Edge{
 			Index: i,
-			A:     &vertices[e.X],
-			B:     &vertices[e.Y],
+			A:     &vertices[int(e.X)],
+			B:     &vertices[int(e.Y)],
 		}
 	}
 	f.Vertices = vertices

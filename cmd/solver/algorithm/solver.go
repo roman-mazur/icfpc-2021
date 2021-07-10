@@ -8,7 +8,7 @@ import (
 	"github.com/roman-mazur/icfpc-2021/fitness"
 )
 
-var GenerationSize = 4
+var GenerationSize = 64
 
 type GenerationItem struct {
 	Id     int
@@ -46,7 +46,7 @@ func newGeneration(orig data.Figure, h data.Hole, ε, size, iter int) Generation
 func Solve(f data.Figure, h data.Hole, ε, iter int) *data.Figure {
 	res := f
 	for i := 0; i < iter; i++ {
-		generation := newGeneration(f, h, ε, GenerationSize, i)
+		generation := newGeneration(res, h, ε, GenerationSize, i)
 		if len(generation) == 0 {
 			break
 		}

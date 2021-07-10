@@ -27,7 +27,7 @@ func main() {
 	original := pb.Figure.Copy()
 	pb.Figure = algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, 3)
 
-	unfit := cmd.Analyze(pb, original, true)
+	unfit := cmd.Analyze(pb, original, false)
 
 	gfx.DrawEdges(
 		pixelgl.WindowConfig{

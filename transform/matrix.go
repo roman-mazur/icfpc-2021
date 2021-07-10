@@ -1,8 +1,6 @@
 package transform
 
 import (
-	"math"
-
 	"github.com/faiface/pixel"
 	"github.com/roman-mazur/icfpc-2021/data"
 )
@@ -22,8 +20,8 @@ func (mt *matrixTransformer) apply(v *data.Vertex) {
 	oldV := *v
 
 	newPos := mt.m.Project(v.PVec())
-	v.X = int(math.Round(newPos.X))
-	v.Y = int(math.Round(newPos.Y))
+	v.X = newPos.X
+	v.Y = newPos.Y
 	mt.transformed[v] = struct{}{}
 
 	for _, candidate := range mt.f.GetConnectedVertices(v) {

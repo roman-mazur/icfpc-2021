@@ -54,7 +54,7 @@ func TestIntersect(t *testing.T) {
 
 	for _, test := range suite {
 		t.Run(
-			fmt.Sprintf("(%d%d-%d%d)x(%d%d-%d%d)_intersect_%v",
+			fmt.Sprintf("(%f%f-%f%f)x(%f%f-%f%f)_intersect_%v",
 				test.a.A.X, test.a.A.Y, test.a.B.X, test.a.B.Y,
 				test.b.A.X, test.b.A.Y, test.b.B.X, test.b.B.Y,
 				test.expect,
@@ -121,7 +121,7 @@ func TestContain(t *testing.T) {
 
 	for _, test := range suite {
 		t.Run(
-			fmt.Sprintf("hole-contains-(%d,%d)-%v", test.vertex.X, test.vertex.Y, test.expect),
+			fmt.Sprintf("hole-contains-(%f,%f)-%v", test.vertex.X, test.vertex.Y, test.expect),
 			func(t *testing.T) {
 				assert.Assert(t, test.hole.Contain(test.vertex) == test.expect)
 			},

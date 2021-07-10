@@ -9,7 +9,7 @@ import (
 
 func TestEdge_Line(t *testing.T) {
 	for _, tcase := range []struct {
-		x1, y1, x2, y2 int
+		x1, y1, x2, y2 float64
 		a, b, c        float64
 	}{
 		{
