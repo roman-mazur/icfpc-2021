@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"math"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -15,10 +14,10 @@ func main() {
 	pb := data.ParseProblem("transform/testdata/spider.problem")
 	original := pb.Figure.Copy()
 
-//	transform.Fold(pb.Figure, pb.Figure.Edges[37], transform.FoldRight)
+	transform.Fold(pb.Figure, pb.Figure.Edges[37], transform.FoldRight)
 //	firstFold := pb.Figure.Copy()
 //	transform.Fold(pb.Figure, pb.Figure.Edges[4], transform.FoldLeft)
-	transform.Rotate(pb.Figure.Edges[8], -math.Pi/8)
+//	transform.Rotate(pb.Figure.Edges[8], -math.Pi/8)
 
 	if !pb.Figure.IsValid(original, pb.Epsilon) {
 		log.Fatal("incorrect figure")

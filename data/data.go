@@ -36,6 +36,20 @@ type Figure struct {
 	Edges    []*Edge
 }
 
+func (f *Figure) GetConnectedEdges(e *Edge) []*Edge {
+	// TODO: Review later. This may need to be optimized.
+	var res []*Edge
+	for _, edge := range f.Edges {
+		if e == edge {
+			continue
+		}
+		if edge.A == e.A || edge.B == e.A || edge.B == e.B {
+			res = append(res, edge)
+		}
+	}
+	return res
+}
+
 type Problem struct {
 	Hole    *Hole   `json:"hole"`
 	Figure  *Figure `json:"figure"`
