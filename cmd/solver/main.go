@@ -25,7 +25,7 @@ func main() {
 
 	pb := data.ParseProblem(os.Args[1])
 	original := pb.Figure.Copy()
-	pb.Figure = algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, 10)
+	pb.Figure = algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, 3)
 
 	unfit := cmd.Analyze(pb, original, true)
 

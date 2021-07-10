@@ -15,9 +15,14 @@ func main() {
 	pb := data.ParseProblem("transform/testdata/endo.problem")
 	original := pb.Figure.Copy()
 
-	//transform.Fold(pb.Figure, pb.Figure.Edges[18], transform.FoldRight)
-	transform.Matrix(pb.Figure, pb.Figure.Edges[38].B, pixel.IM.Rotated(pb.Figure.Edges[38].A.PVec(), math.Pi/16), pb.Epsilon)
-	transform.Matrix(pb.Figure, pb.Figure.Edges[30].B, pixel.IM.Rotated(pb.Figure.Edges[30].A.PVec(), math.Pi/2), pb.Epsilon)
+	transform.Fold(pb.Figure, pb.Figure.Edges[8], transform.FoldLeft)
+	transform.Fold(pb.Figure, pb.Figure.Edges[7], transform.FoldRight)
+	transform.Rotate(pb.Figure, pb.Figure.Edges[38], math.Pi/8, pb.Epsilon)
+	transform.Rotate(pb.Figure, pb.Figure.Edges[30], math.Pi/4, pb.Epsilon)
+	transform.Rotate(pb.Figure, pb.Figure.Edges[54], math.Pi/8, pb.Epsilon)
+	transform.Rotate(pb.Figure, pb.Figure.Edges[47], -math.Pi/4, pb.Epsilon)
+
+	transform.Matrix(pb.Figure, pb.Figure.Edges[15].B, pixel.IM.Moved(pixel.V(0, -12)), pb.Epsilon)
 
 	unfitEdges := cmd.Analyze(pb, original, true)
 
@@ -25,10 +30,11 @@ func main() {
 
 	gfx.DrawEdges(
 		pixelgl.WindowConfig{
-			Title:  "Ant",
+			Title:  "Endo",
 			Bounds: pixel.R(0, 0, 1000, 800),
 		},
 		pb.Hole.Edges,
+		original.Edges,
 		pb.Figure.Edges,
 		unfitEdges,
 	)

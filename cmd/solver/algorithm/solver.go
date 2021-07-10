@@ -11,6 +11,7 @@ import (
 var GenerationSize = 4
 
 type GenerationItem struct {
+	Id int
 	Figure data.Figure
 	Score  float64
 }
@@ -24,13 +25,14 @@ func newGeneration(orig data.Figure, h data.Hole, ε, size, iter int) Generation
 		candidate := orig.Copy()
 		applied := randomAlter(&candidate, ε)
 		if candidate.IsValid(orig, ε) {
-			log.Println(iter, " valid ", applied)
+			log.Println(iter, i, " valid ", applied)
 			gen = append(gen, GenerationItem{
+				Id: i,
 				Figure: candidate,
 				Score:  fitness.FitScore(candidate, h),
 			})
 		} else {
-			log.Println(iter, " INVALID ", applied)
+			log.Println(iter, i, " INVALID ", applied)
 		}
 	}
 
@@ -42,13 +44,14 @@ func newGeneration(orig data.Figure, h data.Hole, ε, size, iter int) Generation
 }
 
 func Solve(f data.Figure, h data.Hole, ε, iter int) *data.Figure {
-	base := f
+	res := f
 	for i := 0; i < iter; i++ {
 		generation := newGeneration(f, h, ε, GenerationSize, i)
 		if len(generation) == 0 {
-			return nil
+			break
 		}
-		base = generation[0].Figure
+		res = generation[0].Figure
+		log.Println("Selected ", generation[0].Id)
 	}
-	return &base
+	return &res
 }

@@ -53,7 +53,7 @@ func drawInWindow(cfg pixelgl.WindowConfig, drawFunc func(window *pixelgl.Window
 			win.Clear(colornames.Gray)
 			drawFunc(win)
 			win.Update()
-			time.Sleep(1 * time.Second)
+			time.Sleep(100)
 		}
 	})
 }
@@ -71,11 +71,7 @@ func DrawEdges(cfg pixelgl.WindowConfig, edges ...[]*data.Edge) {
 		for i, e := range edges {
 			imd := newDraw()
 			imd.SetColorMask(colors[i%len(colors)])
-			thickness := 5.0
-			if i == 0 {
-				thickness = 2.0
-			}
-			drawEdges(imd, e, thickness)
+			drawEdges(imd, e, 2)
 			imd.Draw(win)
 		}
 		if len(edges) > 1 {
