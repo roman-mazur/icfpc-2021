@@ -66,7 +66,9 @@ func (e *Edge) Line() (a, b, c float64) {
 }
 
 func (e Edge) Copy() Edge {
-	return NewEdgeFromCopy(*e.A, *e.B)
+	aCopy := *e.A
+	bCopy := *e.B
+	return Edge{A: &aCopy, B: &bCopy}
 }
 
 func (v *Vertex) UnmarshalJSON(b []byte) error {
