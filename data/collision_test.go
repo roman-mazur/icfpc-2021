@@ -110,6 +110,9 @@ func TestContains(t *testing.T) {
 
 		test{concave, Vertex{6, 20}, true},
 		test{concave, Vertex{50, 40}, true},
+		test{concave, Vertex{30, 30}, true},
+		test{concave, Vertex{0, 0}, true},
+		test{concave, Vertex{60, 0}, true},
 		test{concave, Vertex{30, 10}, false},
 		test{concave, Vertex{10, 75}, false},
 		test{concave, Vertex{75, 10}, false},

@@ -24,6 +24,12 @@ func (e Edge) Intersect(w Edge) bool {
 // vertex is inside. If it's even, the vertex is outside.
 // It is inspired by the concave polygon collision described here: http://www.alienryderflex.com/polygon/
 func (h Hole) Contains(v Vertex) bool {
+	for _, hv := range h.Vertices {
+		if hv.X == v.X && hv.Y == v.Y {
+			return true
+		}
+	}
+
 	// MAX_BOUND defines an approximatively infinite ray coming from the vertex
 	const MAX_BOUND = 10000000
 
@@ -48,9 +54,10 @@ func (h Hole) Contains(v Vertex) bool {
 	}
 	for _, hv := range h.Vertices {
 		if hv.Y == v.Y {
-			if hv.X < v.X {
+			if hv.X <= v.X {
 				leftCollisionCount--
-			} else {
+			}
+			if hv.X >= v.X {
 				rightCollisionCount--
 			}
 		}
