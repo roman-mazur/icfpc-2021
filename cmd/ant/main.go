@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -17,7 +18,12 @@ func main() {
 
 	transform.Fold(pb.Figure, pb.Figure.Edges[37], transform.FoldRight)
 	transform.Fold(pb.Figure, pb.Figure.Edges[4], transform.FoldLeft)
-	//	transform.Rotate(pb.Figure.Edges[8], -math.Pi/8)
+	transform.Rotate(pb.Figure.Edges[20], -math.Pi/4)
+	transform.Rotate(pb.Figure.Edges[26], math.Pi*0.75)
+	transform.Rotate(pb.Figure.Edges[10], math.Pi/2)
+	transform.Rotate(pb.Figure.Edges[34], math.Pi*0.9)
+	transform.Rotate(pb.Figure.Edges[36], math.Pi)
+	transform.Rotate(pb.Figure.Edges[24], math.Pi*0.4)
 
 	if !pb.Figure.IsValid(original, pb.Epsilon) {
 		log.Fatal("incorrect figure")
