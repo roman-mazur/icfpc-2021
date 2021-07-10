@@ -17,6 +17,11 @@ var (
 	k         = 6.0 // temp scale
 	marginTop = 6.0
 
+	flipVertically = pixel.IM.ScaledXY(
+		pixel.V(0, 0),
+		pixel.V(1, -1),
+	)
+
 	colors = []pixel.RGBA{
 		pixel.RGB(0.8, 0.8, 0.8),
 		pixel.RGB(1, 0, 0),
@@ -37,10 +42,7 @@ func drawInWindow(cfg pixelgl.WindowConfig, drawFunc func(window *pixelgl.Window
 
 		// Trick to invert origin
 		win.SetMatrix(
-			pixel.IM.ScaledXY(
-				pixel.V(0, 0),
-				pixel.V(1, -1),
-			).Chained(
+			flipVertically.Chained(
 				pixel.IM.Moved(
 					pixel.V(0, win.Bounds().H()+marginTop),
 				),
@@ -75,6 +77,7 @@ func DrawEdges(cfg pixelgl.WindowConfig, edges ...[]*data.Edge) {
 			}
 			drawEdges(imd, e, thickness)
 			imd.Draw(win)
+			drawEdgeNums(win, e)
 		}
 	})
 }
@@ -113,9 +116,10 @@ func drawEdgeNums(win *pixelgl.Window, edges []*data.Edge) {
 	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
 
 	for i, e := range edges {
-		txt := text.New(e.PLine().Center().Scaled(k), atlas)
+		pos := e.PLine().Center().Scaled(k)
+		txt := text.New(pos, atlas)
 
 		fmt.Fprintf(txt, "%d", i)
-		txt.Draw(win, pixel.IM)
+		txt.Draw(win, pixel.IM.ScaledXY(pos, pixel.V(1, -1)))
 	}
 }
