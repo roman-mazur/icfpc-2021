@@ -38,6 +38,7 @@ func TestIntersect(t *testing.T) {
 	var suite = []test{
 		{newEdge(v00, v22), newEdge(v02, v20), true},
 		{newEdge(v00, v12), newEdge(v02, v20), true},
+		{newEdge(v00, v20), newEdge(v00, v10), false}, // Touch, not intersect
 		{newEdge(v10, v12), newEdge(v00, v20), false}, // Touch, not intersect
 		{newEdge(v01, v21), newEdge(v11, v20), false}, // Touch, not intersect
 		{newEdge(v01, v21), newEdge(v11, v10), false}, // Touch, not intersect

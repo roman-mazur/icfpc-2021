@@ -72,7 +72,7 @@ func (f *Figure) Solution() Solution {
 	}
 }
 
-func (e *Edge) SqLength() float64 {
+func (e Edge) SqLength() float64 {
 	return math.Pow(float64(e.A.X-e.B.X), 2) + math.Pow(float64(e.A.Y-e.B.Y), 2)
 }
 

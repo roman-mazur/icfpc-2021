@@ -9,6 +9,10 @@ func (v Vertex) Equal(with Vertex) bool {
 // It implements a linear equation resolution algorithm.
 // More details: https://izziswift.com/how-can-i-check-if-two-segments-intersect/
 func (e Edge) Intersect(w Edge) bool {
+	if e.A.Y == w.A.Y && e.A.Y == w.B.Y { // Edges are aligned
+		return false
+	}
+
 	dx0 := e.B.X - e.A.X
 	dx1 := w.B.X - w.A.X
 	dy0 := e.B.Y - e.A.Y
@@ -34,12 +38,13 @@ func (e Edge) Intersect(w Edge) bool {
 
 // Touches returns true if given Edge touches with w. It is complementary to func (Edge) Intersect(Edge)
 func (e Edge) Touch(w Edge) bool {
-	if e.A.Y == w.A.Y && e.A.Y == w.B.Y {
+	if e.A.Y == w.A.Y && e.A.Y == w.B.Y { // Edges are aligned
 		return !((w.A.X < e.A.X && w.B.X < e.A.X &&
 			w.A.X < e.B.X && w.B.X < e.B.X) ||
 			(w.A.X > e.A.X && w.B.X > e.A.X &&
 				w.A.X > e.B.X && w.B.X > e.B.X))
 	}
+
 	dx0 := e.B.X - e.A.X
 	dx1 := w.B.X - w.A.X
 	dy0 := e.B.Y - e.A.Y

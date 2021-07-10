@@ -25,8 +25,8 @@ func Fit(f data.Figure, h data.Hole) bool {
 
 // Unfit describes an unfit occurrence, pointing to the unfitting Edge, and anfitting vertices (1 or 2)
 type Unfit struct {
-	Edge   *data.Edge
-	Unfits []*data.Vertex
+	Edge     *data.Edge
+	Vertices []*data.Vertex
 }
 
 // ListUnfits returns a list of unfitting Unfit occurrences from the figure, inside the Hole.
@@ -39,15 +39,15 @@ func ListUnfits(f data.Figure, h data.Hole) (list []Unfit) {
 		bFits := h.Contain(*e.B)
 
 		if !aFits || !bFits {
-			unfits := make([]*data.Vertex, 0, 2)
+			v := make([]*data.Vertex, 0, 2)
 			if !aFits {
-				unfits = append(unfits, e.A)
+				v = append(v, e.A)
 			}
 			if !bFits {
-				unfits = append(unfits, e.B)
+				v = append(v, e.B)
 			}
 
-			list = append(list, Unfit{e, unfits})
+			list = append(list, Unfit{e, v})
 		}
 	}
 

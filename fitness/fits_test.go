@@ -8,13 +8,7 @@ import (
 	"gotest.tools/assert"
 )
 
-func TestFigureFits(t *testing.T) {
-	type test struct {
-		hole   data.Hole
-		figure data.Figure
-		expect bool
-	}
-
+func genBigShape() (data.Hole, data.Figure) {
 	bigHole := data.Hole{
 		Vertices: []data.Vertex{
 			data.Vertex{0, 0},
@@ -25,6 +19,12 @@ func TestFigureFits(t *testing.T) {
 	}
 	bigHole.FillEdges()
 
+	bigFigure := data.Figure{Vertices: bigHole.Vertices, Edges: bigHole.Edges}
+
+	return bigHole, bigFigure
+}
+
+func genSmallShape() (data.Hole, data.Figure) {
 	smallHole := data.Hole{
 		Vertices: []data.Vertex{
 			data.Vertex{0, 0},
@@ -35,11 +35,23 @@ func TestFigureFits(t *testing.T) {
 	}
 	smallHole.FillEdges()
 
+	smallFigure := data.Figure{Vertices: smallHole.Vertices, Edges: smallHole.Edges}
+
+	return smallHole, smallFigure
+}
+
+func TestFigureFits(t *testing.T) {
+	type test struct {
+		hole   data.Hole
+		figure data.Figure
+		expect bool
+	}
+
 	line := []data.Vertex{data.Vertex{10, 10}, data.Vertex{-10, -10}}
 	lineFigure := data.Figure{Vertices: line, Edges: []*data.Edge{&data.Edge{A: &line[0], B: &line[1]}}}
 
-	smallFigure := data.Figure{Vertices: smallHole.Vertices, Edges: smallHole.Edges}
-	bigFigure := data.Figure{Vertices: bigHole.Vertices, Edges: bigHole.Edges}
+	bigHole, bigFigure := genBigShape()
+	smallHole, smallFigure := genSmallShape()
 
 	var suite = []test{
 		test{bigHole, smallFigure, true},
