@@ -20,12 +20,17 @@ type Edge struct {
 	A, B *Vertex
 }
 
+func NewEdgeFromCopy(A, B Vertex) Edge {
+	return Edge{&A, &B}
+}
+
 func (e *Edge) String() string {
 	return fmt.Sprintf("[%s->%s]", e.A, e.B)
 }
 
 type Hole struct {
-	Vertices []*Vertex
+	Vertices []Vertex
+	Edges    []*Edge
 }
 
 type Figure struct {
@@ -64,6 +69,10 @@ func (e *Edge) Line() (a, b, c float64) {
 	return
 }
 
+func (e Edge) Copy() Edge {
+	return NewEdgeFromCopy(*e.A, *e.B)
+}
+
 func (v *Vertex) UnmarshalJSON(b []byte) error {
 	var rawVtx []int
 	if err := json.Unmarshal(b, &rawVtx); err != nil {
@@ -81,13 +90,34 @@ func (v *Vertex) UnmarshalJSON(b []byte) error {
 }
 
 func (h *Hole) UnmarshalJSON(b []byte) error {
-	var vertices []*Vertex
+	var vertices []Vertex
 	if err := json.Unmarshal(b, &vertices); err != nil {
 		return err
 	}
 
 	h.Vertices = vertices
+	h.FillEdges()
+
 	return nil
+}
+
+func (h *Hole) FillEdges() {
+	verticesCount := len(h.Vertices)
+	h.Edges = make([]*Edge, verticesCount)
+
+	for i := range h.Vertices {
+		if i == 0 {
+			h.Edges[0] = &Edge{
+				A: &h.Vertices[verticesCount-1],
+				B: &h.Vertices[0],
+			}
+			continue
+		}
+		h.Edges[i] = &Edge{
+			A: &h.Vertices[i-1],
+			B: &h.Vertices[i],
+		}
+	}
 }
 
 func (f *Figure) UnmarshalJSON(b []byte) error {
