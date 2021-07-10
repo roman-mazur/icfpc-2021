@@ -13,11 +13,11 @@ func main() {
 	pb := data.ParseProblem("transform/testdata/korgi.problem")
 	original := pb.Figure.Copy()
 
-	transform.Fold(pb.Figure, pb.Figure.Edges[30], transform.FoldLeft)
-	transform.Fold(pb.Figure, pb.Figure.Edges[3], transform.FoldRight)
 	transform.Fold(pb.Figure, pb.Figure.Edges[27], transform.FoldRight)
+	transform.Fold(pb.Figure, pb.Figure.Edges[3], transform.FoldLeft)
+	transform.Fold(pb.Figure, pb.Figure.Edges[30], transform.FoldLeft)
 
-	unfitEdges := cmd.Analyze(pb, original, false)
+	unfitEdges := cmd.Analyze(pb, original, true)
 
 	cmd.WriteSolution(pb.Figure.Solution(), 2)
 
