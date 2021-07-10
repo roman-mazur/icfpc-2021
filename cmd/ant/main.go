@@ -1,16 +1,12 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
 	"math"
-	"os"
-	"path/filepath"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/roman-mazur/icfpc-2021/cmd"
 	"github.com/roman-mazur/icfpc-2021/data"
-	"github.com/roman-mazur/icfpc-2021/fitness"
 	"github.com/roman-mazur/icfpc-2021/gfx"
 	"github.com/roman-mazur/icfpc-2021/transform"
 )
@@ -28,38 +24,17 @@ func main() {
 	transform.Rotate(pb.Figure.Edges[36], math.Pi)
 	transform.Rotate(pb.Figure.Edges[24], math.Pi*0.4)
 
-	if !pb.Figure.IsValid(original, pb.Epsilon) {
-		log.Fatal("incorrect figure")
-	}
+	unfitEdges := cmd.Analyze(pb, original)
 
-	writeSolution(pb.Figure.Solution())
-
-	unfits := fitness.ListUnfits(*pb.Figure, *pb.Hole)
-	unfitEdges := make([]*data.Edge, len(unfits))
-	for i, unfit := range unfits {
-		unfitEdges[i] = unfit.Edge
-	}
+	cmd.WriteSolution(pb.Figure.Solution(), 3)
 
 	gfx.DrawEdges(
 		pixelgl.WindowConfig{
-			Title:  "Spider",
+			Title:  "Ant",
 			Bounds: pixel.R(0, 0, 1000, 800),
 		},
 		pb.Hole.Edges,
 		pb.Figure.Edges,
 		unfitEdges,
-		//		[]*data.Edge{original.Edges[9]},
-		//		[]*data.Edge{original.Edges[10]},
 	)
-}
-
-func writeSolution(sol data.Solution) {
-	if solFile, err := os.Create(filepath.Join("solutions", "3.json")); err == nil {
-		defer solFile.Close()
-		if err := json.NewEncoder(solFile).Encode(sol); err != nil {
-			log.Fatal(err)
-		}
-	} else {
-		log.Fatal(err)
-	}
 }
