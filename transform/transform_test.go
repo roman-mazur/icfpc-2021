@@ -126,8 +126,8 @@ func TestRotate(t *testing.T) {
 	})
 }
 
-func TestSolveSpider(t *testing.T) {
-	f, err := os.Open("testdata/spider.problem")
+func TestSolveAnt(t *testing.T) {
+	f, err := os.Open("testdata/ant.problem")
 	if err != nil {
 		t.Fatal(err)
 	}

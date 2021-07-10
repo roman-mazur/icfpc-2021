@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	pb := data.ParseProblem("transform/testdata/spider.problem")
+	pb := data.ParseProblem("transform/testdata/ant.problem")
 	original := pb.Figure.Copy()
 
 	transform.Fold(pb.Figure, pb.Figure.Edges[37], transform.FoldRight)
