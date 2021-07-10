@@ -24,6 +24,10 @@ var (
 	v12 = Vertex{X: 1, Y: 2}
 )
 
+func newEdge(A, B Vertex) Edge {
+	return Edge{&A, &B}
+}
+
 func TestIntersect(t *testing.T) {
 	type test struct {
 		a, b   Edge
@@ -31,17 +35,17 @@ func TestIntersect(t *testing.T) {
 	}
 
 	var suite = []test{
-		test{NewEdgeFromCopy(v00, v22), NewEdgeFromCopy(v02, v20), true},
-		test{NewEdgeFromCopy(v00, v12), NewEdgeFromCopy(v02, v20), true},
-		test{NewEdgeFromCopy(v10, v10), NewEdgeFromCopy(v10, v22), true},
-		test{NewEdgeFromCopy(v10, v12), NewEdgeFromCopy(v00, v20), true},
-		//test{NewEdgeFromCopy(v01, v21), NewEdgeFromCopy(v11, v20), true},
-		//test{NewEdgeFromCopy(v01, v21), NewEdgeFromCopy(v11, v10), true},
-		//test{NewEdgeFromCopy(v01, v21), NewEdgeFromCopy(v11, v12), true},
-		test{NewEdgeFromCopy(v00, v10), NewEdgeFromCopy(v02, v20), false},
-		test{NewEdgeFromCopy(v00, v20), NewEdgeFromCopy(v20, v22), false},
-		test{NewEdgeFromCopy(v01, v10), NewEdgeFromCopy(v11, v21), false},
-		test{NewEdgeFromCopy(v10, v10), NewEdgeFromCopy(v02, v20), false}, // Considers parallel
+		test{newEdge(v00, v22), newEdge(v02, v20), true},
+		test{newEdge(v00, v12), newEdge(v02, v20), true},
+		test{newEdge(v10, v10), newEdge(v10, v22), true},
+		test{newEdge(v10, v12), newEdge(v00, v20), true},
+		//test{newEdge(v01, v21), newEdge(v11, v20), true},
+		//test{newEdge(v01, v21), newEdge(v11, v10), true},
+		//test{newEdge(v01, v21), newEdge(v11, v12), true},
+		test{newEdge(v00, v10), newEdge(v02, v20), false},
+		test{newEdge(v00, v20), newEdge(v20, v22), false},
+		test{newEdge(v01, v10), newEdge(v11, v21), false},
+		test{newEdge(v10, v10), newEdge(v02, v20), false}, // Considers parallel
 	}
 
 	for _, test := range suite {

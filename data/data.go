@@ -12,7 +12,7 @@ type Vertex struct {
 	X, Y int
 }
 
-func (v *Vertex) String() string {
+func (v Vertex) String() string {
 	return fmt.Sprintf("(%d,%d)", v.X, v.Y)
 }
 
@@ -20,11 +20,7 @@ type Edge struct {
 	A, B *Vertex
 }
 
-func NewEdgeFromCopy(A, B Vertex) Edge {
-	return Edge{&A, &B}
-}
-
-func (e *Edge) String() string {
+func (e Edge) String() string {
 	return fmt.Sprintf("[%s->%s]", e.A, e.B)
 }
 
@@ -60,7 +56,7 @@ func (e *Edge) Line() (a, b, c float64) {
 	} else if e.A.X == e.B.X {
 		a = 1
 		b = 0
-		c = -float64(e.A.Y)
+		c = -float64(e.A.X)
 	} else {
 		a = float64(e.A.Y-e.B.Y) / float64(e.A.X-e.B.X)
 		b = -1
