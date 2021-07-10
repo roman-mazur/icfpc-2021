@@ -8,7 +8,7 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-var k = 6.0
+var k = 6.0 // temp scale
 
 func DrawProblem(cfg pixelgl.WindowConfig, pb *data.Problem) {
 	pixelgl.Run(func() {
