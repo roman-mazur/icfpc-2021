@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 
@@ -15,31 +16,35 @@ const (
 	actionCount
 )
 
-var actionList = map[int]func(*data.Figure){
+var actionList = map[int]func(*data.Figure, int) string{
 	actionFold:   randomFold,
 	actionRotate: randomRotate,
 }
 
-func randomFold(f *data.Figure) {
+func randomFold(f *data.Figure, eps int) string {
 	direction := transform.FoldRight
 
 	if rand.Intn(1) == 0 {
 		direction = transform.FoldLeft
 	}
 
-	transform.Fold(f, getRandomEdge(f), direction)
+	edge := getRandomEdge(f)
+	transform.Fold(f, edge, direction)
+	return fmt.Sprintf("randomFold(%s)", edge)
 }
 
-func randomRotate(f *data.Figure) {
+func randomRotate(f *data.Figure, eps int) string {
 	randomAngle := math.Pi * rand.Float64()
 
-	transform.Rotate(getRandomEdge(f), randomAngle)
+	edge := getRandomEdge(f)
+	transform.Rotate(f, edge, randomAngle, eps)
+	return fmt.Sprintf("randomRotate(%s)", edge)
 }
 
 func getRandomEdge(f *data.Figure) *data.Edge {
 	return f.Edges[rand.Intn(len(f.Edges))]
 }
 
-func randomAlter(f *data.Figure) {
-	actionList[rand.Intn(actionCount)](f)
+func randomAlter(f *data.Figure, eps int) string {
+	return actionList[rand.Intn(actionCount)](f, eps)
 }

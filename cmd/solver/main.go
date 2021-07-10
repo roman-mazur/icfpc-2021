@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -23,11 +22,15 @@ func main() {
 	}
 
 	pb := data.ParseProblem(os.Args[1])
+	original := pb.Figure.Copy()
 	pb.Figure = algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, 10)
-	gfx.DrawProblem(pixelgl.WindowConfig{
-		Title:  "Hello ICFP Contest!",
-		Bounds: pixel.R(0, 0, 1000, 800),
-	}, pb)
-
-	fmt.Print(pb)
+	gfx.DrawEdges(
+		pixelgl.WindowConfig{
+			Title:  "Hello ICFP Contest!",
+			Bounds: pixel.R(0, 0, 1000, 800),
+		},
+		pb.Hole.Edges,
+		original.Edges,
+		pb.Figure.Edges,
+	)
 }

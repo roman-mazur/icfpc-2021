@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	"log"
 	"sort"
 
 	"github.com/roman-mazur/icfpc-2021/data"
@@ -21,12 +22,15 @@ func newGeneration(orig data.Figure, h data.Hole, ε, size int) Generation {
 
 	for i := 0; i < size; i++ {
 		candidate := orig.Copy()
-		randomAlter(&candidate)
+		applied := randomAlter(&candidate, ε)
 		if candidate.IsValid(orig, ε) {
+			log.Println("valid ", applied)
 			gen = append(gen, GenerationItem{
 				Figure: candidate,
 				Score:  fitness.FitScore(candidate, h),
 			})
+		} else {
+			log.Println("INVALID ", applied)
 		}
 	}
 
