@@ -13,13 +13,15 @@ func (f Figure) IsValid(original Figure, epsilon int) bool {
 
 	for i, newEdge := range f.Edges {
 		originalEdge := original.Edges[i]
-
-		ratio := math.Abs(newEdge.SqLength()/originalEdge.SqLength() - 1)
-
-		if ratio > float64(epsilon)/float64(million) {
+		if !GoodRatio(originalEdge, newEdge, epsilon) {
 			return false
 		}
 	}
 
 	return true
+}
+
+func GoodRatio(oldEdge, newEdge *Edge, epsilon int) bool {
+	ratio := math.Abs(newEdge.SqLength()/oldEdge.SqLength() - 1)
+	return ratio <= float64(epsilon)/million
 }

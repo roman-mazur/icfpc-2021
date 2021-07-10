@@ -1,6 +1,8 @@
 package main
 
 import (
+	"math"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/roman-mazur/icfpc-2021/cmd"
@@ -13,7 +15,8 @@ func main() {
 	pb := data.ParseProblem("transform/testdata/endo.problem")
 	original := pb.Figure.Copy()
 
-	transform.Fold(pb.Figure, pb.Figure.Edges[18], transform.FoldRight)
+	//transform.Fold(pb.Figure, pb.Figure.Edges[18], transform.FoldRight)
+	transform.Matrix(pb.Figure, pb.Figure.Edges[38].B, pixel.IM.Rotated(pb.Figure.Edges[38].A.PVec(), math.Pi), pb.Epsilon)
 
 	unfitEdges := cmd.Analyze(pb, original, false)
 

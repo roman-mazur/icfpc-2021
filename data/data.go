@@ -56,6 +56,19 @@ func (f *Figure) GetConnectedEdges(e *Edge) []*Edge {
 	return res
 }
 
+func (f *Figure) GetConnectedVertices(v *Vertex) []*Vertex {
+	// TODO: Review later. This may need to be optimized.
+	var res []*Vertex
+	for _, edge := range f.Edges {
+		if edge.A == v {
+			res = append(res, edge.B)
+		} else if edge.B == v {
+			res = append(res, edge.A)
+		}
+	}
+	return res
+}
+
 type Problem struct {
 	Hole    *Hole   `json:"hole"`
 	Figure  *Figure `json:"figure"`
