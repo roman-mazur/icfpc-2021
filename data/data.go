@@ -19,11 +19,12 @@ func (v Vertex) String() string {
 }
 
 type Edge struct {
-	A, B *Vertex
+	Index int // For debugging only.
+	A, B  *Vertex
 }
 
 func (e Edge) String() string {
-	return fmt.Sprintf("[%s->%s]", e.A, e.B)
+	return fmt.Sprintf("%d[%s->%s]", e.Index, e.A, e.B)
 }
 
 type Hole struct {
@@ -34,6 +35,20 @@ type Hole struct {
 type Figure struct {
 	Vertices []Vertex
 	Edges    []*Edge
+}
+
+func (f *Figure) GetConnectedEdges(e *Edge) []*Edge {
+	// TODO: Review later. This may need to be optimized.
+	var res []*Edge
+	for _, edge := range f.Edges {
+		if e == edge {
+			continue
+		}
+		if edge.A == e.A || edge.B == e.A || edge.B == e.B || edge.A == e.B {
+			res = append(res, edge)
+		}
+	}
+	return res
 }
 
 type Problem struct {
@@ -70,7 +85,7 @@ func (e *Edge) Line() (a, b, c float64) {
 func (e Edge) Copy() Edge {
 	aCopy := *e.A
 	bCopy := *e.B
-	return Edge{A: &aCopy, B: &bCopy}
+	return Edge{A: &aCopy, B: &bCopy, Index: e.Index}
 }
 
 func (v *Vertex) UnmarshalJSON(b []byte) error {
@@ -108,14 +123,16 @@ func (h *Hole) FillEdges() {
 	for i := range h.Vertices {
 		if i == 0 {
 			h.Edges[0] = &Edge{
-				A: &h.Vertices[verticesCount-1],
-				B: &h.Vertices[0],
+				Index: 0,
+				A:     &h.Vertices[verticesCount-1],
+				B:     &h.Vertices[0],
 			}
 			continue
 		}
 		h.Edges[i] = &Edge{
-			A: &h.Vertices[i-1],
-			B: &h.Vertices[i],
+			Index: i,
+			A:     &h.Vertices[i-1],
+			B:     &h.Vertices[i],
 		}
 	}
 }
@@ -136,11 +153,13 @@ func (f *Figure) UnmarshalJSON(b []byte) error {
 		return errors.New("invalid vertices")
 	}
 
-	for _, e := range edges {
-		f.Edges = append(f.Edges, &Edge{
-			A: &vertices[e.X],
-			B: &vertices[e.Y],
-		})
+	f.Edges = make([]*Edge, len(edges))
+	for i, e := range edges {
+		f.Edges[i] = &Edge{
+			Index: i,
+			A:     &vertices[e.X],
+			B:     &vertices[e.Y],
+		}
 	}
 	f.Vertices = vertices
 	return nil
@@ -158,12 +177,11 @@ func (f Figure) Copy() (c Figure) {
 	for i, e := range f.Edges {
 		// Translate target vertices addresses from f.Vertices array address to c.Vertices array
 		// It will point to the same index in the new array
-		edge := Edge{
-			A: (*Vertex)(unsafe.Pointer(uintptr(unsafe.Pointer(e.A)) - uintptr(unsafe.Pointer(&f.Vertices[0])) + uintptr(unsafe.Pointer(&c.Vertices[0])))),
-			B: (*Vertex)(unsafe.Pointer(uintptr(unsafe.Pointer(e.B)) - uintptr(unsafe.Pointer(&f.Vertices[0])) + uintptr(unsafe.Pointer(&c.Vertices[0])))),
+		c.Edges[i] = &Edge{
+			Index: i,
+			A:     (*Vertex)(unsafe.Pointer(uintptr(unsafe.Pointer(e.A)) - uintptr(unsafe.Pointer(&f.Vertices[0])) + uintptr(unsafe.Pointer(&c.Vertices[0])))),
+			B:     (*Vertex)(unsafe.Pointer(uintptr(unsafe.Pointer(e.B)) - uintptr(unsafe.Pointer(&f.Vertices[0])) + uintptr(unsafe.Pointer(&c.Vertices[0])))),
 		}
-
-		c.Edges[i] = &edge
 	}
 
 	return c

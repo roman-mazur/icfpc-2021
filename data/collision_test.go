@@ -26,7 +26,7 @@ var (
 )
 
 func newEdge(A, B Vertex) Edge {
-	return Edge{&A, &B}
+	return Edge{A: &A, B: &B}
 }
 
 func TestIntersect(t *testing.T) {
@@ -36,19 +36,19 @@ func TestIntersect(t *testing.T) {
 	}
 
 	var suite = []test{
-		test{newEdge(v00, v22), newEdge(v02, v20), true},
-		test{newEdge(v00, v12), newEdge(v02, v20), true},
-		test{newEdge(v10, v12), newEdge(v00, v20), false}, // Touch, not intersect
-		test{newEdge(v01, v21), newEdge(v11, v20), false}, // Touch, not intersect
-		test{newEdge(v01, v21), newEdge(v11, v10), false}, // Touch, not intersect
-		test{newEdge(v01, v21), newEdge(v11, v12), false}, // Touch, not intersect
-		test{newEdge(v00, v20), newEdge(v20, v22), false}, // Touch, not intersect
-		test{newEdge(v00, v10), newEdge(v02, v20), false},
-		test{newEdge(v01, v10), newEdge(v11, v21), false},
-		test{newEdge(v10, v20), newEdge(v10, v20), false}, // Collinear
-		test{newEdge(v10, v10), newEdge(v02, v20), false}, // Collinear
-		test{newEdge(v10, v10), newEdge(v10, v22), false}, // Collinear
-		test{newEdge(Vertex{-1000000, 0}, v00), newEdge(v12, v01), false},
+		{newEdge(v00, v22), newEdge(v02, v20), true},
+		{newEdge(v00, v12), newEdge(v02, v20), true},
+		{newEdge(v10, v12), newEdge(v00, v20), false}, // Touch, not intersect
+		{newEdge(v01, v21), newEdge(v11, v20), false}, // Touch, not intersect
+		{newEdge(v01, v21), newEdge(v11, v10), false}, // Touch, not intersect
+		{newEdge(v01, v21), newEdge(v11, v12), false}, // Touch, not intersect
+		{newEdge(v00, v20), newEdge(v20, v22), false}, // Touch, not intersect
+		{newEdge(v00, v10), newEdge(v02, v20), false},
+		{newEdge(v01, v10), newEdge(v11, v21), false},
+		{newEdge(v10, v20), newEdge(v10, v20), false}, // Collinear
+		{newEdge(v10, v10), newEdge(v02, v20), false}, // Collinear
+		{newEdge(v10, v10), newEdge(v10, v22), false}, // Collinear
+		{newEdge(Vertex{-1000000, 0}, v00), newEdge(v12, v01), false},
 	}
 
 	for _, test := range suite {

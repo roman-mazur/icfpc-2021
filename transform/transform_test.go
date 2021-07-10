@@ -50,13 +50,32 @@ func TestFold(t *testing.T) {
 		assert.Equal(t, f.Vertices[5].Y, 2)
 	})
 
+	twoSquaresWithHand := `
+{
+  "vertices": [[0, 0], [1, 0], [0, 1], [1, 1], [0, 2], [1, 2], [2, 2], [2, 0]],
+  "edges": [[0, 1], [1, 3], [3, 2], [2, 0], [2, 4], [4, 5], [5, 3], [5, 6], [6, 7]]
+}
+`
+	t.Run("2 squares with hand", func(t *testing.T) {
+		var f data.Figure
+		_ = f.UnmarshalJSON([]byte(twoSquaresWithHand))
+		t.Log(f)
+		Fold(&f, &data.Edge{A: &f.Vertices[1], B: &f.Vertices[3]}, FoldLeft)
+		t.Log(f)
+		// Hand should not be touched.
+		assert.Equal(t, f.Vertices[6].X, 2)
+		assert.Equal(t, f.Vertices[6].Y, 2)
+		assert.Equal(t, f.Vertices[7].X, 2)
+		assert.Equal(t, f.Vertices[7].Y, 0)
+	})
+
 	square := `
 {
   "vertices": [[0, 0], [1, 0], [0, 1], [1, 1]],
   "edges": [[0, 1], [1, 3], [3, 2], [2, 0]]
 }
 `
-	t.Run("2 squares - diagonal fold", func(t *testing.T) {
+	t.Run("square - diagonal fold", func(t *testing.T) {
 		var f data.Figure
 		_ = f.UnmarshalJSON([]byte(square))
 		t.Log(f)
@@ -107,8 +126,8 @@ func TestRotate(t *testing.T) {
 	})
 }
 
-func TestSolveSpider(t *testing.T) {
-	f, err := os.Open("testdata/spider.problem")
+func TestSolveAnt(t *testing.T) {
+	f, err := os.Open("testdata/ant.problem")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -117,8 +136,9 @@ func TestSolveSpider(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(p.Figure)
-	Fold(p.Figure, p.Figure.Edges[2], FoldLeft)
-	t.Log(p.Figure)
-	// TODO: Try to solve here.
+	original := p.Figure.Copy()
+	Fold(p.Figure, p.Figure.Edges[37], FoldRight)
+	assert.Equal(t, p.Figure.IsValid(original, p.Epsilon), true)
+	Fold(p.Figure, p.Figure.Edges[4], FoldLeft)
+	assert.Equal(t, p.Figure.IsValid(original, p.Epsilon), true)
 }
