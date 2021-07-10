@@ -1,8 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+
+	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/pixelgl"
+	"github.com/roman-mazur/icfpc-2021/data"
+	"github.com/roman-mazur/icfpc-2021/gfx"
 )
 
 func fatalUsage() {
@@ -15,5 +21,11 @@ func main() {
 		fatalUsage()
 	}
 
-	// pb := data.ParseProblem(os.Args[1])
+	pb := data.ParseProblem(os.Args[1])
+	gfx.DrawProblem(pixelgl.WindowConfig{
+		Title:  "Hello ICFP Contest!",
+		Bounds: pixel.R(0, 0, 800, 600),
+	}, pb)
+
+	fmt.Print(pb)
 }
