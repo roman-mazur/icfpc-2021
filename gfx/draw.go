@@ -49,7 +49,7 @@ func drawInWindow(cfg pixelgl.WindowConfig, drawFunc func(window *pixelgl.Window
 			),
 		)
 
-		for !win.Closed() {
+		for !win.Closed() && !win.JustReleased(pixelgl.KeyEscape) {
 			win.Clear(colornames.Gray)
 			drawFunc(win)
 			win.Update()
