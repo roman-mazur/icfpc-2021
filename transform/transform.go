@@ -64,7 +64,7 @@ func Fold(figure *data.Figure, edge *data.Edge, dir FoldDirection) {
 }
 
 func Rotate(edge *data.Edge, Δ float64) {
-	x := float64(edge.B.X - edge.A.X) * math.Cos(Δ) - float64(edge.B.Y - edge.A.Y) * math.Sin(Δ) + float64(edge.A.X)
-	y := float64(edge.B.X - edge.A.X) * math.Sin(Δ) + float64(edge.B.Y - edge.A.Y) * math.Cos(Δ) + float64(edge.A.Y)
+	x := float64(edge.B.X-edge.A.X)*math.Cos(Δ) - float64(edge.B.Y-edge.A.Y)*math.Sin(Δ) + float64(edge.A.X)
+	y := float64(edge.B.X-edge.A.X)*math.Sin(Δ) + float64(edge.B.Y-edge.A.Y)*math.Cos(Δ) + float64(edge.A.Y)
 	edge.B.X, edge.B.Y = int(math.Round(x)), int(math.Round(y))
 }
