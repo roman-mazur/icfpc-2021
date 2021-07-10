@@ -18,6 +18,11 @@ func (v Vertex) String() string {
 	return fmt.Sprintf("(%d,%d)", v.X, v.Y)
 }
 
+func (v Vertex) MarshalJSON() ([]byte, error) {
+	enc := []int{v.X, v.Y}
+	return json.Marshal(enc)
+}
+
 type Edge struct {
 	Index int // For debugging only.
 	A, B  *Vertex
@@ -55,6 +60,16 @@ type Problem struct {
 	Hole    *Hole   `json:"hole"`
 	Figure  *Figure `json:"figure"`
 	Epsilon int     `json:"epsilon"`
+}
+
+type Solution struct {
+	Vertices []Vertex `json:"vertices"`
+}
+
+func (f *Figure) Solution() Solution {
+	return Solution{
+		Vertices: f.Vertices,
+	}
 }
 
 func (e *Edge) SqLength() float64 {

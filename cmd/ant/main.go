@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"math"
+	"os"
+	"path/filepath"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
@@ -29,6 +32,8 @@ func main() {
 		log.Fatal("incorrect figure")
 	}
 
+	writeSolution(pb.Figure.Solution())
+
 	unfits := fitness.ListUnfits(*pb.Figure, *pb.Hole)
 	unfitEdges := make([]*data.Edge, len(unfits))
 	for i, unfit := range unfits {
@@ -46,4 +51,15 @@ func main() {
 		//		[]*data.Edge{original.Edges[9]},
 		//		[]*data.Edge{original.Edges[10]},
 	)
+}
+
+func writeSolution(sol data.Solution) {
+	if solFile, err := os.Create(filepath.Join("solutions", "3.json")); err == nil {
+		defer solFile.Close()
+		if err := json.NewEncoder(solFile).Encode(sol); err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		log.Fatal(err)
+	}
 }
