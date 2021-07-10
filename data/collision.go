@@ -78,3 +78,31 @@ func (f Figure) Fits(h Hole) bool {
 
 	return true
 }
+
+type Unfit struct {
+	Edge   *Edge
+	Unfits []*Vertex
+}
+
+func (f Figure) ListUnfits(h Hole) (list []Unfit) {
+	list = make([]Unfit, 0, len(f.Edges))
+
+	for _, e := range f.Edges {
+		aFits := h.Contains(*e.A)
+		bFits := h.Contains(*e.B)
+
+		if !aFits || !bFits {
+			unfits := make([]*Vertex, 0, 2)
+			if !aFits {
+				unfits = append(unfits, e.A)
+			}
+			if !bFits {
+				unfits = append(unfits, e.B)
+			}
+
+			list = append(list, Unfit{e, unfits})
+		}
+	}
+
+	return
+}
