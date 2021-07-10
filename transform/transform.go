@@ -8,6 +8,7 @@ import (
 )
 
 type FoldDirection byte
+
 const (
 	FoldRight FoldDirection = iota
 	FoldLeft
@@ -17,9 +18,9 @@ const eps = 0.000001
 
 const debug = false
 
-func log(format string, args... interface{}) {
+func log(format string, args ...interface{}) {
 	if debug {
-		fmt.Printf(format + "\n", args...)
+		fmt.Printf(format+"\n", args...)
 	}
 }
 
@@ -79,7 +80,7 @@ func flipVertex(edge *data.Edge, v *data.Vertex, dir FoldDirection) bool {
 
 type folder struct {
 	visited  map[*data.Edge]struct{}
-	flipped map[*data.Vertex]struct{}
+	flipped  map[*data.Vertex]struct{}
 	figure   *data.Figure
 	foldEdge *data.Edge
 	dir      FoldDirection
@@ -115,10 +116,10 @@ func (f *folder) fold(edge *data.Edge) {
 }
 
 // Fold transforms the figure mutating its state.
-func Fold(figure *data.Figure, edge *data.Edge, dir FoldDirection, excludes... *data.Edge) {
+func Fold(figure *data.Figure, edge *data.Edge, dir FoldDirection, excludes ...*data.Edge) {
 	f := &folder{
 		visited:  make(map[*data.Edge]struct{}),
-		flipped: make(map[*data.Vertex]struct{}),
+		flipped:  make(map[*data.Vertex]struct{}),
 		figure:   figure,
 		foldEdge: edge,
 		dir:      dir,

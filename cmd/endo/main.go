@@ -13,8 +13,7 @@ func main() {
 	pb := data.ParseProblem("transform/testdata/endo.problem")
 	original := pb.Figure.Copy()
 
-	transform.Fold(pb.Figure, pb.Figure.Edges[18], transform.FoldRight, pb.Figure.Edges[23])
-	transform.Fold(pb.Figure, pb.Figure.Edges[29], transform.FoldRight)
+	transform.Fold(pb.Figure, pb.Figure.Edges[18], transform.FoldRight)
 
 	unfitEdges := cmd.Analyze(pb, original, false)
 
