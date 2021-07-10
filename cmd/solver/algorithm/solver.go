@@ -11,7 +11,7 @@ import (
 var GenerationSize = 4
 
 type GenerationItem struct {
-	Id int
+	Id     int
 	Figure data.Figure
 	Score  float64
 }
@@ -27,7 +27,7 @@ func newGeneration(orig data.Figure, h data.Hole, ε, size, iter int) Generation
 		if candidate.IsValid(orig, ε) {
 			log.Println(iter, i, " valid ", applied)
 			gen = append(gen, GenerationItem{
-				Id: i,
+				Id:     i,
 				Figure: candidate,
 				Score:  fitness.FitScore(candidate, h),
 			})

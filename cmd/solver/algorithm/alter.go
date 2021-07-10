@@ -38,7 +38,7 @@ func randomRotate(f *data.Figure, eps int) string {
 
 	edge := getRandomEdge(f)
 	transform.Rotate(f, edge, randomAngle, eps)
-	return fmt.Sprintf("randomRotate(%s, %f)", edge, 180 * randomAngle / math.Pi)
+	return fmt.Sprintf("randomRotate(%s, %f)", edge, 180*randomAngle/math.Pi)
 }
 
 func getRandomEdge(f *data.Figure) *data.Edge {
