@@ -13,7 +13,7 @@ func (f Figure) IsValid(original Figure, ε int) bool {
 
 	for i, newEdge := range f.Edges {
 		originalEdge := original.Edges[i]
-		if !GoodRatio(originalEdge, newEdge, ε) {
+		if LengthRatio(originalEdge, newEdge) > float64(ε)/million {
 			return false
 		}
 	}
@@ -21,7 +21,11 @@ func (f Figure) IsValid(original Figure, ε int) bool {
 	return true
 }
 
-func GoodRatio(oldEdge, newEdge *Edge, ε int) bool {
-	ratio := math.Abs(newEdge.SqLength()/oldEdge.SqLength() - 1)
-	return ratio <= float64(ε)/million
+func LengthRatio(oldEdge, newEdge *Edge) float64 {
+	oldSqLength := oldEdge.SqLength()
+	if oldSqLength == 0 {
+		return million
+	}
+
+	return math.Abs(newEdge.SqLength()/oldSqLength - 1)
 }
