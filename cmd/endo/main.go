@@ -16,9 +16,10 @@ func main() {
 	original := pb.Figure.Copy()
 
 	//transform.Fold(pb.Figure, pb.Figure.Edges[18], transform.FoldRight)
-	transform.Matrix(pb.Figure, pb.Figure.Edges[38].B, pixel.IM.Rotated(pb.Figure.Edges[38].A.PVec(), math.Pi), pb.Epsilon)
+	transform.Matrix(pb.Figure, pb.Figure.Edges[38].B, pixel.IM.Rotated(pb.Figure.Edges[38].A.PVec(), math.Pi/16), pb.Epsilon)
+	transform.Matrix(pb.Figure, pb.Figure.Edges[30].B, pixel.IM.Rotated(pb.Figure.Edges[30].A.PVec(), math.Pi/2), pb.Epsilon)
 
-	unfitEdges := cmd.Analyze(pb, original, false)
+	unfitEdges := cmd.Analyze(pb, original, true)
 
 	cmd.WriteSolution(pb.Figure.Solution(), 5)
 
