@@ -16,6 +16,7 @@ import (
 var (
 	k         = 6.0 // temp scale
 	marginTop = 6.0
+	maxFPS    = 30
 
 	flipVertically = pixel.IM.ScaledXY(
 		pixel.V(0, 0),
@@ -49,11 +50,26 @@ func drawInWindow(cfg pixelgl.WindowConfig, drawFunc func(window *pixelgl.Window
 			),
 		)
 
+		atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
+		txt := text.New(pixel.V(10, 10), atlas)
+
 		for !win.Closed() && !win.JustReleased(pixelgl.KeyEscape) {
+			startTime := time.Now()
+
 			win.Clear(colornames.Gray)
 			drawFunc(win)
+			txt.Draw(win, pixel.IM.ScaledXY(txt.Bounds().Center(), pixel.V(1, -1)))
 			win.Update()
-			time.Sleep(100)
+
+			elapsed := time.Since(startTime)
+			toSleep := time.Duration(time.Second.Nanoseconds()/int64(maxFPS)) - elapsed
+
+			txt.Clear()
+			fmt.Fprintf(txt, "%d", time.Second/elapsed)
+
+			if toSleep > 0 {
+				time.Sleep(toSleep)
+			}
 		}
 	})
 }
