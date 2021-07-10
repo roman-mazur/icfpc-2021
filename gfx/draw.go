@@ -53,7 +53,7 @@ func drawInWindow(cfg pixelgl.WindowConfig, drawFunc func(window *pixelgl.Window
 			win.Clear(colornames.Gray)
 			drawFunc(win)
 			win.Update()
-			time.Sleep(20)
+			time.Sleep(1 * time.Second)
 		}
 	})
 }
