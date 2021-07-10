@@ -41,10 +41,7 @@ func drawHole(win *pixelgl.Window, h *data.Hole) {
 }
 
 func drawFigure(win *pixelgl.Window, edges []*data.Edge) {
-	imd, _ := newIMDrawWithEdges(edges, false)
-
-	imd.SetColorMask(pixel.RGB(1.0, 0, 0))
-	imd.Line(5)
+	imd, _ := newIMDrawWithFigureEdges(edges, false)
 	imd.Draw(win)
 }
 
@@ -60,6 +57,31 @@ func newIMDrawWithEdges(edges []*data.Edge, idx bool) (*imdraw.IMDraw, *text.Tex
 				float64(e.B.X)*k,  // x2
 				float64(e.B.Y)*k), // y2
 		)
+	}
+
+	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
+	txt := text.New(pixel.V(50, 50), atlas)
+
+	fmt.Fprintf(txt, "hello, world%s", "!")
+
+	return imd, txt
+}
+
+func newIMDrawWithFigureEdges(edges []*data.Edge, idx bool) (*imdraw.IMDraw, *text.Text) {
+	imd := imdraw.New(nil)
+
+	imd.SetColorMask(pixel.RGB(1.0, 0, 0))
+	for _, e := range edges {
+		imd.Push(
+			pixel.V(
+				float64(e.A.X)*k,  // x1
+				float64(e.A.Y)*k), // y1
+			pixel.V(
+				float64(e.B.X)*k,  // x2
+				float64(e.B.Y)*k), // y2
+		)
+		imd.Line(5)
+		imd.Reset()
 	}
 
 	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
