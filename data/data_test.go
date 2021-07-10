@@ -66,6 +66,7 @@ func TestFigure_UnmarshalJSON(t *testing.T) {
 	if e != nil {
 		t.Fatal(e)
 	}
+	t.Log(f)
 	assert.Equal(t, len(f.Vertices), 6)
 	assert.Equal(t, len(f.Edges), 7)
 }

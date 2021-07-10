@@ -17,7 +17,7 @@ const eps = 0.000001
 
 // Fold transforms the figure mutating its state.
 // TODO: Figure out how to copy figures.
-func Fold(figure data.Figure, edge *data.Edge, dir FoldDirection) {
+func Fold(figure *data.Figure, edge *data.Edge, dir FoldDirection) {
 	a, b, c := edge.Line()
 	for i, v := range figure.Vertices {
 		var diff float64
@@ -39,7 +39,7 @@ func Fold(figure data.Figure, edge *data.Edge, dir FoldDirection) {
 			// It has to be flipped.
 			// Perpendicular: -b * x + a * y + d = 0.
 			d := b*float64(v.X) - a*float64(v.Y)
-			// Projected point.
+			// Projected point (intersection with the perpendicular).
 			var ix, iy float64
 			if b == 0 {
 				// Vertical line.
@@ -57,13 +57,14 @@ func Fold(figure data.Figure, edge *data.Edge, dir FoldDirection) {
 			}
 
 			// Finally flip the point.
-			figure.Vertices[i].X = int(2*ix - float64(v.X))
-			figure.Vertices[i].Y = int(2*iy - float64(v.Y))
+			figure.Vertices[i].X = int(math.Round(2*ix - float64(v.X)))
+			figure.Vertices[i].Y = int(math.Round(2*iy - float64(v.Y)))
 		}
 	}
 }
 
-func Rotate(figure data.Figure, edge *data.Edge, angle float64) data.Figure {
-	// TODO
-	return figure
+func Rotate(edge *data.Edge, Δ float64) {
+	x := float64(edge.B.X - edge.A.X) * math.Cos(Δ) - float64(edge.B.Y - edge.A.Y) * math.Sin(Δ) + float64(edge.A.X)
+	y := float64(edge.B.X - edge.A.X) * math.Sin(Δ) + float64(edge.B.Y - edge.A.Y) * math.Cos(Δ) + float64(edge.A.Y)
+	edge.B.X, edge.B.Y = int(math.Round(x)), int(math.Round(y))
 }

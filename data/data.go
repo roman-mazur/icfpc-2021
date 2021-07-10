@@ -12,7 +12,7 @@ type Vertex struct {
 	X, Y int
 }
 
-func (v *Vertex) String() string {
+func (v Vertex) String() string {
 	return fmt.Sprintf("(%d,%d)", v.X, v.Y)
 }
 
@@ -20,7 +20,7 @@ type Edge struct {
 	A, B *Vertex
 }
 
-func (e *Edge) String() string {
+func (e Edge) String() string {
 	return fmt.Sprintf("[%s->%s]", e.A, e.B)
 }
 
