@@ -136,8 +136,9 @@ func TestSolveAnt(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(p.Figure)
-	Fold(p.Figure, p.Figure.Edges[2], FoldLeft)
-	t.Log(p.Figure)
-	// TODO: Try to solve here.
+	original := p.Figure.Copy()
+	Fold(p.Figure, p.Figure.Edges[37], FoldRight)
+	assert.Equal(t, p.Figure.IsValid(original, p.Epsilon), true)
+	//Fold(p.Figure, p.Figure.Edges[4], FoldLeft)
+	//assert.Equal(t, p.Figure.IsValid(original, p.Epsilon), true)
 }

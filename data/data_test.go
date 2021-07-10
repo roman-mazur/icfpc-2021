@@ -69,4 +69,5 @@ func TestFigure_UnmarshalJSON(t *testing.T) {
 	t.Log(f)
 	assert.Equal(t, len(f.Vertices), 6)
 	assert.Equal(t, len(f.Edges), 7)
+	assert.Equal(t, f.Edges[3].Index, 3)
 }

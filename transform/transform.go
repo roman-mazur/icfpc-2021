@@ -62,10 +62,10 @@ func flipVertex(edge *data.Edge, v *data.Vertex, dir FoldDirection) bool {
 }
 
 type folder struct {
-	visited map[*data.Edge]struct{}
-	figure *data.Figure
+	visited  map[*data.Edge]struct{}
+	figure   *data.Figure
 	foldEdge *data.Edge
-	dir FoldDirection
+	dir      FoldDirection
 }
 
 func (f *folder) fold(edge *data.Edge) {
