@@ -65,3 +65,44 @@ func (h Hole) Contains(v Vertex) bool {
 
 	return false
 }
+
+// Fits returns true if the Figure fits in the given Hole.
+// Could be optimized (for instance, checking if any point of the Figure vertices are in the Hole, and check if no
+// Figure's edges intersect with Hole edges.)
+func (f Figure) Fits(h Hole) bool {
+	for _, v := range f.Vertices {
+		if !h.Contains(v) {
+			return false
+		}
+	}
+
+	return true
+}
+
+type Unfit struct {
+	Edge   *Edge
+	Unfits []*Vertex
+}
+
+func (f Figure) ListUnfits(h Hole) (list []Unfit) {
+	list = make([]Unfit, 0, len(f.Edges))
+
+	for _, e := range f.Edges {
+		aFits := h.Contains(*e.A)
+		bFits := h.Contains(*e.B)
+
+		if !aFits || !bFits {
+			unfits := make([]*Vertex, 0, 2)
+			if !aFits {
+				unfits = append(unfits, e.A)
+			}
+			if !bFits {
+				unfits = append(unfits, e.B)
+			}
+
+			list = append(list, Unfit{e, unfits})
+		}
+	}
+
+	return
+}
