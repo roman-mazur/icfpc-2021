@@ -14,13 +14,13 @@ import (
 	"github.com/roman-mazur/icfpc-2021/cmd/solver/algorithm"
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/gfx"
-	"github.com/roman-mazur/icfpc-2021/profiling"
 )
 
 var (
-	asService  = flag.Bool("as-service", false, "No UI")
-	iterations = flag.Int("iterations", 1000, "Number of iterations")
-	genSize    = flag.Int("gen-size", 1024, "Gen size")
+	asService    = flag.Bool("as-service", false, "No UI")
+	iterations   = flag.Int("iterations", 1000, "Number of iterations")
+	genSize      = flag.Int("gen-size", 256, "Gen size")
+	parallelGens = flag.Int("gen-parallel", 3, "Number of parallel generations")
 )
 
 func fatalUsage() {
@@ -35,8 +35,7 @@ func main() {
 		problemPath = flag.Args()[0]
 	}
 	algorithm.GenerationSize = *genSize
-
-	go profiling.Start()
+	algorithm.NbParallel = *parallelGens
 
 	pb := data.ParseProblem(problemPath)
 	original := pb.Figure.Copy()
@@ -45,6 +44,8 @@ func main() {
 		Figure:  &original,
 		Epsilon: pb.Epsilon,
 	}
+
+	algorithm.GenerationSize = 16 * len(pb.Figure.Vertices)
 
 	bestMatch := algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, *iterations)
 	pb.Figure = &bestMatch.Figure
