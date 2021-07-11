@@ -36,9 +36,9 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 			parent := parents[rand.Intn(len(parents))]
 			candidate := parent.Figure.Copy()
 
-			for isValid := false; !isValid; {
+			for isValid, attempt := false, 0; !isValid && attempt < 10; attempt++ {
 				applied := randomAlter(&candidate, &h, ε)
-				isValid = true // Until stretches are implemented, `candidate.IsValid(parent.Figure, ε)` will always be true
+				isValid = candidate.IsValid(parent.Figure, ε)
 				if !isValid {
 					log.Println(iter, i, " INVALID, retrying ", applied)
 					continue
@@ -66,6 +66,7 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 }
 
 func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
+	result.Id = -1
 	selection := []GenerationItem{}
 	parents := []GenerationItem{{Figure: f, Score: fitness.FitScore(f, h)}}
 	bestScore := 0.0
@@ -82,7 +83,8 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 		bestScore = selection[0].Score
 
 		for _, res := range selection {
-			if res.Score <= result.Score && res.Flattened.IsValid(f, ε) {
+			if result.Id == -1 || (res.Score <= result.Score && res.Flattened.IsValid(f, ε)) {
+				result.Id = 0 // Always set something as a result.
 				result.Figure = res.Flattened
 				result.Score = res.Score
 				dislikes = int(-1.0 / result.Score)

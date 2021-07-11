@@ -23,7 +23,7 @@ func fatalUsage() {
 
 func main() {
 	log.Println("Hello ICFP Contest!")
-	problemPath := "problems/problem.3"
+	problemPath := "problems/problem.1"
 	if len(os.Args) >= 2 {
 		problemPath = os.Args[1]
 	}
@@ -36,9 +36,11 @@ func main() {
 	if len(os.Args) > 2 {
 		iteration, _ = strconv.Atoi(os.Args[2])
 	}
+//	iteration = 1
 	if len(os.Args) > 3 {
 		algorithm.GenerationSize, _ = strconv.Atoi(os.Args[3])
 	}
+//	algorithm.GenerationSize = 5
 	original := pb.Figure.Copy()
 	bestMatch := algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, iteration)
 	pb.Figure = &bestMatch.Figure
@@ -55,7 +57,7 @@ func main() {
 			Bounds: pixel.R(0, 0, 1000, 800),
 		},
 		pb.Hole.Edges,
-		original.Edges,
+		//original.Edges,
 		pb.Figure.Edges,
 		unfit,
 	)
