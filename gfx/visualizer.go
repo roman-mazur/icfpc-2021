@@ -126,8 +126,10 @@ func (vis *Visualizer) PushFigure(fig *data.Figure, selectable bool, thickness f
 	return vis
 }
 
-func (vis *Visualizer) PushEdges(edges []*data.Edge) {
-	vis.miscEdges = append(vis.miscEdges, edges)
+func (vis *Visualizer) PushEdges(edges ...[]*data.Edge) *Visualizer {
+
+	vis.miscEdges = append(vis.miscEdges, edges...)
+	return vis
 }
 
 func (vis *Visualizer) buildStaticObjects() {
@@ -183,7 +185,10 @@ func (vis *Visualizer) updateInputs() {
 			// break
 		}
 
-		if f.selectedVtx != nil && vis.win.Pressed(pixelgl.MouseButton1) && vis.win.MousePreviousPosition() != vis.win.MousePosition() {
+		if vis.OnVertexDrag != nil &&
+			f.selectedVtx != nil &&
+			vis.win.Pressed(pixelgl.MouseButton1) &&
+			vis.win.MousePreviousPosition() != vis.win.MousePosition() {
 			vis.OnVertexDrag(f.selectedVtx, mousePos.Scaled(1/k))
 		}
 	}
