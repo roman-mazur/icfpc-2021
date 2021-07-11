@@ -32,6 +32,9 @@ func main() {
 	if len(os.Args) > 2 {
 		iteration, _ = strconv.Atoi(os.Args[2])
 	}
+	if len(os.Args) > 3 {
+		algorithm.GenerationSize, _ = strconv.Atoi(os.Args[3])
+	}
 	original := pb.Figure.Copy()
 	bestMatch := algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, iteration)
 	pb.Figure = &bestMatch.Figure
