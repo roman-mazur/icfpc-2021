@@ -34,11 +34,6 @@ func main() {
 
 	// vis.PushEdges(pb.Figure.Edges)
 
-	vis.OnVertexDrag = func(v *data.Vertex, mousePos pixel.Vec) {
-		v.X = mousePos.X
-		v.Y = mousePos.Y
-	}
-
 	vis.Start()
 	fmt.Print(pb)
 }

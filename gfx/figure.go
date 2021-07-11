@@ -99,3 +99,12 @@ func (fe *FigureEntity) render(imd *imdraw.IMDraw, e *data.Edge, i int) {
 
 	imd.Reset()
 }
+
+func (fe *FigureEntity) mvSelectedVtx(mousePos pixel.Vec) {
+	if fe.selectedVtx == nil {
+		return
+	}
+
+	fe.selectedVtx.X = mousePos.X
+	fe.selectedVtx.Y = mousePos.Y
+}

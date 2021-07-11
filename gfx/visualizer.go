@@ -22,10 +22,8 @@ type Visualizer struct {
 	figures   []*FigureEntity
 	miscEdges [][]*data.Edge
 
-	draggedVtx *data.Vertex
-
-	OnDrag       func(e *data.Edge, mousePos pixel.Vec)
-	OnVertexDrag func(v *data.Vertex, mousePos pixel.Vec)
+	targetFigure *FigureEntity
+	// onDrag       func(mousePos pixel.Vec)
 }
 
 func NewVisualizer(cfg pixelgl.WindowConfig, pb *data.Problem) *Visualizer {
@@ -61,6 +59,8 @@ func (vis *Visualizer) Start() {
 			thickness: 2,
 		})
 
+		grid := buildGrid(win.Bounds().Max.Scaled(1 / k))
+
 		builtMiscEdges := []*imdraw.IMDraw{}
 		for i, e := range vis.miscEdges {
 			builtMiscEdges = append(builtMiscEdges, BuildEdges(EdgeBuilder{
@@ -69,8 +69,6 @@ func (vis *Visualizer) Start() {
 				thickness: 2,
 			}))
 		}
-
-		grid := buildGrid(win.Bounds().Max.Scaled(1 / k))
 
 		for !vis.win.Closed() && !vis.win.JustReleased(pixelgl.KeyEscape) {
 			startTime := time.Now()
@@ -132,25 +130,33 @@ func (vis *Visualizer) PushEdges(edges ...[]*data.Edge) *Visualizer {
 	return vis
 }
 
-func (vis *Visualizer) buildStaticObjects() {
-
-}
-
 // Dirty mouse selection
 func (vis *Visualizer) updateInputs() {
-
-	// return
-
 	if !vis.win.MouseInsideWindow() {
 		return
 	}
 
-	// if vis.win.JustPressed()
-
 	mousePos := vis.win.MousePosition().ScaledXY(pixel.V(1, -1))
 	mousePos.Y += vis.win.Bounds().H() + marginTop
 
+	if vis.win.JustPressed(pixelgl.MouseButton1) {
+		vis.findTargetFigure(mousePos)
+		return
+	}
+
+	if vis.win.JustReleased(pixelgl.MouseButton1) {
+		vis.targetFigure = nil
+		return
+	}
+
+	if vis.win.MousePosition() != vis.win.MousePreviousPosition() && vis.targetFigure != nil {
+		vis.targetFigure.mvSelectedVtx(mousePos.Scaled(1 / k))
+	}
+}
+
+func (vis *Visualizer) findTargetFigure(mousePos pixel.Vec) {
 	found := false
+
 	for _, f := range vis.figures {
 		f.selectedIdx = -1
 		f.selectedVtx = nil
@@ -160,36 +166,21 @@ func (vis *Visualizer) updateInputs() {
 		}
 
 		for _, e := range f.fig.Edges {
-			// mousePos := vis.win.MousePosition()
-			// l := pixel.L(e.A.PVec().Scaled(k), e.B.PVec().Scaled(k))
-
-			// if l.IntersectCircle(pixel.C(mousePos, 5)) == pixel.ZV {
-			// 	continue
-			// }
-
 			v1 := e.A.PVec().Scaled(k)
 			v2 := e.B.PVec().Scaled(k)
 
 			if pixel.C(v1, 5).Contains(mousePos) {
 				f.selectedVtx = e.A
 				found = true
-				continue
 			} else if pixel.C(v2, 5).Contains(mousePos) {
 				f.selectedVtx = e.B
 				found = true
-				continue
 			}
 
-			// f.selectedIdx = i
-			// found = true
-			// break
-		}
-
-		if vis.OnVertexDrag != nil &&
-			f.selectedVtx != nil &&
-			vis.win.Pressed(pixelgl.MouseButton1) &&
-			vis.win.MousePreviousPosition() != vis.win.MousePosition() {
-			vis.OnVertexDrag(f.selectedVtx, mousePos.Scaled(1/k))
+			if found {
+				vis.targetFigure = f
+				return
+			}
 		}
 	}
 }
