@@ -38,6 +38,7 @@ func IsBetterSolution(problemPath string, score int) bool {
 	if !ok {
 		return false
 	}
+	log.Println("Problem", problemId, "best score is", bestScore)
 	return bestScore > score
 }
 
