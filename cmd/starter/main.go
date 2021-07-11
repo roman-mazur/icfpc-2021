@@ -27,14 +27,15 @@ func main() {
 	vis := gfx.NewVisualizer(pixelgl.WindowConfig{
 		Title:  "Hello ICFP Contest!",
 		Bounds: pixel.R(0, 0, 1000, 800),
-	})
+	}, pb)
 
-	vis.PushEdges([]*data.Edge{}, pb.Hole.Edges, false, 1, false)
-	vis.PushEdges(figCopy.Edges, pb.Figure.Edges, true, 2, true)
+	vis.PushFigure(&figCopy, true, 2, false)
+	vis.PushFigure(pb.Figure, false, 2, true)
 
-	// vis.OnDrag = func(e *data.Edge, mousePos pixel.Vec) {
-	// 	transform.Rotate(pb.Figure, e, 0.1, pb.Epsilon)
-	// }
+	vis.OnVertexDrag = func(v *data.Vertex, mousePos pixel.Vec) {
+		v.X = mousePos.X
+		v.Y = mousePos.Y
+	}
 
 	vis.Start()
 	fmt.Print(pb)

@@ -13,20 +13,25 @@ import (
 )
 
 type Visualizer struct {
-	winCfg pixelgl.WindowConfig
-	win    *pixelgl.Window
-
-	OnDrag func(e *data.Edge, mousePos pixel.Vec)
-
-	meshes     []*EdgeMesh
+	winCfg     pixelgl.WindowConfig
+	win        *pixelgl.Window
 	asciiAtlas *text.Atlas
+
+	figures []*FigureEntity
+	pb      *data.Problem
+
+	draggedVtx *data.Vertex
+
+	OnDrag       func(e *data.Edge, mousePos pixel.Vec)
+	OnVertexDrag func(v *data.Vertex, mousePos pixel.Vec)
 }
 
-func NewVisualizer(cfg pixelgl.WindowConfig) *Visualizer {
+func NewVisualizer(cfg pixelgl.WindowConfig, pb *data.Problem) *Visualizer {
 	return &Visualizer{
 		winCfg:     cfg,
-		meshes:     make([]*EdgeMesh, 0),
+		figures:    make([]*FigureEntity, 0),
 		asciiAtlas: text.NewAtlas(basicfont.Face7x13, text.ASCII),
+		pb:         pb,
 	}
 }
 
@@ -49,17 +54,24 @@ func (vis *Visualizer) Start() {
 		vis.win = win
 		txt := text.New(pixel.V(10, 10), vis.asciiAtlas)
 
+		hole := BuildEdges(EdgeBuilder{
+			edges:     vis.pb.Hole.Edges,
+			thickness: 2,
+		})
+
 		for !vis.win.Closed() && !vis.win.JustReleased(pixelgl.KeyEscape) {
 			startTime := time.Now()
 
 			vis.win.Clear(colornames.Gray)
 			vis.updateInputs()
 
-			for _, m := range vis.meshes {
-				m.Build().Draw(vis.win)
+			hole.Draw(win)
 
-				if m.showIndexes {
-					for _, t := range m.BuildLabels(vis.asciiAtlas) {
+			for _, f := range vis.figures {
+				f.Build().Draw(vis.win)
+
+				if f.showIndexes {
+					for _, t := range f.BuildLabels(vis.asciiAtlas) {
 						t.Draw(vis.win, pixel.IM.ScaledXY(t.Bounds().Center(), pixel.V(1, -1)))
 					}
 				}
@@ -81,50 +93,72 @@ func (vis *Visualizer) Start() {
 	})
 }
 
-func (vis *Visualizer) PushEdges(origEdges []*data.Edge, edges []*data.Edge, selectable bool, thickness float64, showIndexes bool) {
-	vis.meshes = append(vis.meshes, &EdgeMesh{
-		origEdges:   origEdges,
-		edges:       edges,
+func (vis *Visualizer) PushFigure(fig *data.Figure, selectable bool, thickness float64, showIndexes bool) *Visualizer {
+	vis.figures = append(vis.figures, &FigureEntity{
+		origFig:     vis.pb.Figure,
+		fig:         fig,
 		selectable:  selectable,
 		selectedIdx: -1,
 		thickness:   thickness,
-		color:       colors[len(vis.meshes)],
+		color:       colors[len(vis.figures)],
 		showIndexes: showIndexes,
+		ε:           vis.pb.Epsilon,
 	})
+
+	return vis
 }
 
 // Dirty mouse selection
 func (vis *Visualizer) updateInputs() {
-	if vis.win.Pressed(pixelgl.MouseButton1) && vis.win.MousePreviousPosition() != vis.win.MousePosition() {
-		vis.OnDrag(vis.meshes[1].edges[0], vis.win.MousePosition())
-	}
 
-	return
+	// return
 
 	if !vis.win.MouseInsideWindow() {
 		return
 	}
 
-	found := false
-	for _, m := range vis.meshes {
-		m.selectedIdx = -1
+	// if vis.win.JustPressed()
 
-		if !m.selectable || found {
+	mousePos := vis.win.MousePosition().ScaledXY(pixel.V(1, -1))
+	mousePos.Y += vis.win.Bounds().H() + marginTop
+
+	found := false
+	for _, f := range vis.figures {
+		f.selectedIdx = -1
+		f.selectedVtx = nil
+
+		if !f.selectable || found {
 			continue
 		}
 
-		for i, e := range m.edges {
-			mousePos := vis.win.MousePosition().ScaledXY(pixel.V(1, -1))
-			mousePos.Y += vis.win.Bounds().H() + marginTop
-			l := pixel.L(e.A.PVec().Scaled(k), e.B.PVec().Scaled(k))
+		for _, e := range f.fig.Edges {
+			// mousePos := vis.win.MousePosition()
+			// l := pixel.L(e.A.PVec().Scaled(k), e.B.PVec().Scaled(k))
 
-			if l.IntersectCircle(pixel.C(mousePos, 5)) == pixel.ZV {
+			// if l.IntersectCircle(pixel.C(mousePos, 5)) == pixel.ZV {
+			// 	continue
+			// }
+
+			v1 := e.A.PVec().Scaled(k)
+			v2 := e.B.PVec().Scaled(k)
+
+			if pixel.C(v1, 5).Contains(mousePos) {
+				f.selectedVtx = e.A
+				found = true
+				continue
+			} else if pixel.C(v2, 5).Contains(mousePos) {
+				f.selectedVtx = e.B
+				found = true
 				continue
 			}
 
-			m.selectedIdx = i
-			found = true
-			break
+			// f.selectedIdx = i
+			// found = true
+			// break
+		}
+
+		if f.selectedVtx != nil && vis.win.Pressed(pixelgl.MouseButton1) && vis.win.MousePreviousPosition() != vis.win.MousePosition() {
+			vis.OnVertexDrag(f.selectedVtx, mousePos.Scaled(1/k))
 		}
 	}
 }
