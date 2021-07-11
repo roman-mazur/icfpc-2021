@@ -50,6 +50,16 @@ func (e Edge) String() string {
 	return fmt.Sprintf("%d[%s->%s]", e.Index, e.A, e.B)
 }
 
+func (e Edge) OtherV(v *Vertex) *Vertex {
+	if e.A == v {
+		return e.B
+	}
+	if e.B == v {
+		return e.A
+	}
+	panic("vertex does not belong to the edge")
+}
+
 type Hole struct {
 	Vertices []Vertex
 	Edges    []*Edge
@@ -58,6 +68,15 @@ type Hole struct {
 type Figure struct {
 	Vertices []Vertex
 	Edges    []*Edge
+}
+
+func (f *Figure) FindV(v Vertex) *Vertex {
+	for i, fv := range f.Vertices {
+		if fv.X == v.X && fv.Y == v.Y {
+			return &f.Vertices[i]
+		}
+	}
+	return nil
 }
 
 func (f *Figure) GetConnectedEdges(e *Edge) []*Edge {
