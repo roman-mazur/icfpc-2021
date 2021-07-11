@@ -22,12 +22,16 @@ type GenerationItem struct {
 type Generation []GenerationItem
 
 func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Generation {
-	gen := make(Generation, size+len(parents))
+	outSize := size + len(parents)
+	gen := make(Generation, outSize)
 	wg := new(sync.WaitGroup)
-	wg.Add(size)
+	wg.Add(outSize)
 
 	for i := 0; i < len(parents); i++ {
-		gen[i] = parents[i]
+		go (func(i int) {
+			defer wg.Done()
+			gen[i] = parents[i]
+		})(i)
 	}
 
 	for i := len(parents); i < size+len(parents); i++ {
@@ -87,7 +91,10 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 				result.Id = 0 // Always set something as a result.
 				result.Figure = res.Flattened
 				result.Score = res.Score
-				dislikes = int(-1.0 / result.Score)
+
+				if res.Score < 0 {
+					dislikes = int(-1.0 / result.Score)
+				}
 			}
 		}
 	}
