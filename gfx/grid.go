@@ -1,8 +1,6 @@
 package gfx
 
 import (
-	"fmt"
-
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"golang.org/x/image/colornames"
@@ -10,9 +8,7 @@ import (
 
 func buildGrid(max pixel.Vec) *imdraw.IMDraw {
 	imd := imdraw.New(nil)
-
 	imd.Color = colornames.Black
-	fmt.Print(max)
 
 	for x := 0; x < int(max.X); x += 1 {
 		for y := 0; y < int(max.Y); y += 1 {
