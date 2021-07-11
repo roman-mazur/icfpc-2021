@@ -3,6 +3,7 @@ package gfx
 import (
 	"fmt"
 	"image/color"
+	"math"
 
 	goColor "github.com/gerow/go-color"
 
@@ -109,6 +110,6 @@ func (fe *FigureEntity) mvSelectedVtx(mousePos pixel.Vec) {
 		return
 	}
 
-	fe.selectedVtx.X = mousePos.X
-	fe.selectedVtx.Y = mousePos.Y
+	fe.selectedVtx.X = math.Round(mousePos.X)
+	fe.selectedVtx.Y = math.Round(mousePos.Y)
 }

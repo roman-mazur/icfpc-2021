@@ -14,6 +14,9 @@ import (
 )
 
 type Visualizer struct {
+	camPos  pixel.Vec
+	camZoom float64
+
 	winCfg     pixelgl.WindowConfig
 	win        *pixelgl.Window
 	asciiAtlas *text.Atlas
@@ -28,6 +31,8 @@ type Visualizer struct {
 func NewVisualizer(cfg pixelgl.WindowConfig, pb *data.Problem) *Visualizer {
 	return &Visualizer{
 		winCfg:     cfg,
+		camPos:     pixel.ZV,
+		camZoom:    1.0,
 		figures:    make([]*FigureEntity, 0),
 		asciiAtlas: text.NewAtlas(basicfont.Face7x13, text.ASCII),
 		pb:         pb,
@@ -71,6 +76,10 @@ func (vis *Visualizer) Start() {
 
 		for !vis.win.Closed() && !vis.win.JustReleased(pixelgl.KeyEscape) {
 			startTime := time.Now()
+
+			// cam := pixel.IM.Scaled(vis.camPos, vis.camZoom).Moved(win.Bounds().Center().Sub(vis.camPos))
+			// cam := pixel.IM.ScaledXY(pixel.ZV, pixel.V(1, -1)).Moved(win.Bounds().Center().Sub(vis.camPos))
+			// vis.win.SetMatrix(cam)
 
 			vis.win.Clear(colornames.Gray)
 			vis.updateInputs()
@@ -123,6 +132,8 @@ func (vis *Visualizer) PushFigure(fig *data.Figure, selectable bool, thickness f
 	return vis
 }
 
+// func (vis *Visualizer) PushSolution( *data.Solution)
+
 func (vis *Visualizer) PushEdges(edges ...[]*data.Edge) *Visualizer {
 
 	vis.miscEdges = append(vis.miscEdges, edges...)
@@ -137,6 +148,16 @@ func (vis *Visualizer) updateInputs() {
 
 	mousePos := vis.win.MousePosition().ScaledXY(pixel.V(1, -1))
 	mousePos.Y += vis.win.Bounds().H() + marginTop
+
+	if vis.win.MouseScroll() != pixel.ZV {
+		vis.camZoom += vis.win.MouseScroll().Y * 0.2
+	}
+
+	if vis.win.Pressed(pixelgl.MouseButton3) && vis.win.MousePosition() != vis.win.MousePreviousPosition() {
+		test := vis.win.MousePreviousPosition().Sub(vis.win.MousePosition()).Normal()
+		vis.camPos.X += test.Y
+		vis.camPos.Y -= test.X
+	}
 
 	if vis.win.JustPressed(pixelgl.MouseButton1) {
 		vis.findTargetFigure(mousePos)
