@@ -25,7 +25,7 @@ var doIt = flag.Bool("do-it", false, "Actually do the HTTP calls")
 func main()  {
 	flag.Parse()
 
-	if *doIt {
+	if !*doIt {
 		*doIt = strings.HasSuffix(os.Getenv("GITHUB_REF"), "/main")
 		if *doIt {
 			log.Println("Setting --do-it to true for the GitHub main branch")
