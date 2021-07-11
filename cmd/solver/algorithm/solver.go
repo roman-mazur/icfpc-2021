@@ -40,7 +40,7 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 				}
 
 				score := fitness.FitScore(candidate, h)
-				log.Println(iter, i, " valid ", score, applied)
+				//log.Println(iter, i, " valid ", score, applied)
 				gen[i] = GenerationItem{
 					Id:     i,
 					Figure: candidate,
@@ -62,13 +62,16 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 	selection := []GenerationItem{}
 	result.Figure = f
+	bestScore := 0.0
 
 	for i := 0; i < iter; i++ {
+		log.Println("New generation", i, "/", iter, "- gen size:", GenerationSize, "- best score:", bestScore)
 		generation := newGeneration(append(selection, result), h, ε, GenerationSize, i)
 		if len(generation) == 0 {
 			break
 		}
-		selection = generation[0 : GenerationSize/10]
+		selection = generation[0 : GenerationSize/100]
+		bestScore = selection[0].Score
 
 		for _, res := range selection {
 			flattened := res.Figure.FlattenToGrid()
