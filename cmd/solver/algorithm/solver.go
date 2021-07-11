@@ -13,9 +13,10 @@ import (
 var GenerationSize = 1024
 
 type GenerationItem struct {
-	Id     int
-	Figure data.Figure
-	Score  float64
+	Id        int
+	Figure    data.Figure
+	Flattened data.Figure
+	Score     float64
 }
 
 type Generation []GenerationItem
@@ -39,12 +40,14 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 					continue
 				}
 
+				flattened := candidate.FlattenToGrid()
 				score := fitness.FitScore(candidate, h)
 				//log.Println(iter, i, " valid ", score, applied)
 				gen[i] = GenerationItem{
-					Id:     i,
-					Figure: candidate,
-					Score:  score,
+					Id:        i,
+					Figure:    candidate,
+					Flattened: flattened,
+					Score:     score,
 				}
 			}
 		})(i)
@@ -61,33 +64,39 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 
 func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 	selection := []GenerationItem{}
-	result.Figure = f
+	parents := []GenerationItem{{Figure: f}}
 	bestScore := 0.0
+	dislikes := 0.0
 
 	for i := 0; i < iter; i++ {
-		log.Println("New generation", i, "/", iter, "- gen size:", GenerationSize, "- best score:", bestScore)
-		generation := newGeneration(append(selection, result), h, ε, GenerationSize, i)
+		log.Println("New generation", i, "/", iter, "- gen size:", GenerationSize, "- dislikes:", dislikes, "best generation score:", bestScore)
+		generation := newGeneration(append(selection, parents...), h, ε, GenerationSize, i)
 		if len(generation) == 0 {
 			break
 		}
-		selection = generation[0 : GenerationSize/100]
+		parents = append(parents, selection...)
+		selection = generation[0:max(GenerationSize/64, 1)]
 		bestScore = selection[0].Score
 
 		for _, res := range selection {
-			flattened := res.Figure.FlattenToGrid()
-			if flattened.IsValid(f, ε) && fitness.Fit(flattened, h) {
-				score := fitness.FitScore(flattened, h)
-				if score > result.Score {
+			if res.Score < 0 && res.Flattened.IsValid(f, ε) {
+				// The lower, the better
+				if res.Score > result.Score {
 					continue
 				}
 
-				result.Figure = flattened
-				result.Score = score
-
-				log.Println("Intermediary dislikes", -1.0/result.Score)
+				result.Figure = res.Flattened
+				result.Score = res.Score
+				dislikes = -1.0 / result.Score
 			}
 		}
 	}
-	log.Println("Number of dislikes", -1.0/result.Score)
 	return
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
