@@ -73,7 +73,7 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 	worstScore := 0.0
 	noChangeSince := 0
 
-	for i := 0; i < iter && noChangeSince < iter/2; i++ {
+	for i := 0; i < iter && noChangeSince < max(iter/5, 300); i++ {
 		log.Println("New generation", i, "/", iter, "- gen size:", GenerationSize, "- lastChange:", noChangeSince, "- dislikes:", dislikes, "best / worst generation score:", bestScore, "/", worstScore)
 		wg := new(sync.WaitGroup)
 
@@ -110,7 +110,10 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 		sort.Slice(selection, func(i, j int) bool {
 			return selection[i].Score < selection[j].Score
 		})
-		bestScore = selection[0].Score
+		if selection[0].Score < bestScore {
+			bestScore = selection[0].Score
+			noChangeSince = 0
+		}
 
 		noChangeSince++
 		for _, res := range selection {
@@ -120,7 +123,6 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 
 				if res.Score < 0 {
 					result.Id = 0 // Always set something as a result.
-					noChangeSince = 0
 
 					dislikes = int(-1.0 / result.Score)
 				}
