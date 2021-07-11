@@ -74,19 +74,6 @@ func (vis *Visualizer) Start() {
 			})
 			hole.Draw(win)
 
-			imd := imdraw.New(nil)
-
-			imd.Push(vis.cam.matrix.Unproject(vis.win.MousePosition()))
-
-			imd.Circle(4, 0)
-			imd.Reset()
-
-			imd.Draw(win)
-
-			for _, be := range builtMiscEdges {
-				be.Draw(win)
-			}
-
 			for _, f := range vis.figures {
 				f.Build().Draw(vis.win)
 
@@ -95,7 +82,10 @@ func (vis *Visualizer) Start() {
 						t.Draw(vis.win, vis.cam.matrix)
 					}
 				}
+			}
 
+			for _, be := range builtMiscEdges {
+				be.Draw(win)
 			}
 
 			vis.win.Update()
