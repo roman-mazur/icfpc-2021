@@ -105,12 +105,16 @@ func main()  {
 					log.Printf("Error submitting %d: %s", number, err)
 				} else {
 					log.Printf("Status for %d: %d", number, resp.StatusCode)
+					if resp.StatusCode == 200 {
+						submitted[number] = score
+					}
 				}
+			} else {
+				submitted[number] = score
 			}
 
 			file.Close()
 			cancelFunc()
-			submitted[number] = score
 
 			if *doIt {
 				// Don't attach the contest server.
