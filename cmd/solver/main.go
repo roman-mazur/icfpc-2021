@@ -40,10 +40,16 @@ func main() {
 
 	pb := data.ParseProblem(problemPath)
 	original := pb.Figure.Copy()
+	origPb := data.Problem{
+		Hole:    pb.Hole,
+		Figure:  &original,
+		Epsilon: pb.Epsilon,
+	}
+
 	bestMatch := algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, *iterations)
 	pb.Figure = &bestMatch.Figure
 
-	unfit := cmd.Analyze(pb, original, *asService)
+	unfit := cmd.Analyze(pb, *origPb.Figure, *asService)
 	if len(unfit) == 0 {
 		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), -1.0/bestMatch.Score)
 		cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
@@ -52,15 +58,11 @@ func main() {
 	}
 
 	if !*asService {
-		gfx.DrawEdges(
-			pixelgl.WindowConfig{
-				Title:  filepath.Base(problemPath),
-				Bounds: pixel.R(0, 0, 1000, 800),
-			},
-			pb.Hole.Edges,
-			//original.Edges,
-			pb.Figure.Edges,
-			unfit,
-		)
+		vis := gfx.NewVisualizer(pixelgl.WindowConfig{
+			Title:  filepath.Base(problemPath),
+			Bounds: pixel.R(0, 0, 1000, 800),
+		}, &origPb)
+
+		vis.PushFigure(pb.Figure, false, 2, true).PushEdges(unfit).Start()
 	}
 }
