@@ -34,6 +34,10 @@ func GoodRatio(oldEdge, newEdge *Edge, ε int) bool {
 	return LengthRatio(oldEdge, newEdge) <= float64(ε)/million
 }
 
+func LengthRatioRelative(oldEdge, newEdge *Edge, ε int) float64 {
+	return LengthRatio(oldEdge, newEdge) / (float64(ε)/million)
+}
+
 func ScaleToPreserveRatio(oldEdge, newEdge *Edge, ε int) float64 {
 	l1 := oldEdge.SqLength()
 	lr := newEdge.SqLength() / l1

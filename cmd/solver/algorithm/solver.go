@@ -1,6 +1,7 @@
 package algorithm
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"sort"
@@ -33,6 +34,9 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 			candidate := parent.Figure.Copy()
 
 			for isValid, attempt := false, 0; !isValid && attempt < 10; attempt++ {
+				if len(candidate.Edges) == 0 {
+					panic(fmt.Errorf("bad candidate data %d", i))
+				}
 				applied := randomAlter(&candidate, &h, ε)
 				isValid = candidate.IsValid(parent.Figure, ε)
 				if !isValid {

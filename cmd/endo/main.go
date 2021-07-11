@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/roman-mazur/icfpc-2021/cmd"
+	"github.com/roman-mazur/icfpc-2021/cmd/solver/search"
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/gfx"
 	"github.com/roman-mazur/icfpc-2021/transform"
@@ -24,17 +24,18 @@ func solution(pb *data.Problem) {
 }
 
 func experiment(pb *data.Problem, second *data.Figure) {
-	fmt.Println("experiment", pb.Figure.Edges[38])
-	transform.RotateScale(pb.Figure, pb.Figure.Edges[38], math.Pi/8, pb.Epsilon, false)
-	transform.RotateScale(second, second.Edges[38], math.Pi/8, pb.Epsilon, true)
+	//fmt.Println("experiment", pb.Figure.Edges[38])
+	//transform.RotateScale(pb.Figure, pb.Figure.Edges[38], math.Pi/8, pb.Epsilon, false)
+	//transform.RotateScale(second, second.Edges[38], math.Pi/8, pb.Epsilon, true)
+	*second = *search.Solution(pb)
 }
 
 func main() {
 	pb := data.ParseProblem("transform/testdata/endo.problem")
 	original := pb.Figure.Copy()
 
-	//second := pb.Figure.Copy()
-	//experiment(pb, &second)
+	second := pb.Figure.Copy()
+	experiment(pb, &second)
 
 	solution(pb)
 
@@ -49,7 +50,7 @@ func main() {
 		},
 		pb.Hole.Edges,
 		original.Edges,
-		//second.Edges,
+		second.Edges,
 		pb.Figure.Edges,
 		unfitEdges,
 	)

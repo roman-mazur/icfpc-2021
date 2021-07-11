@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 
+	"github.com/roman-mazur/icfpc-2021/cmd/solver/search"
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/fitness"
 	"github.com/roman-mazur/icfpc-2021/transform"
@@ -19,6 +20,7 @@ var actionList = []action{
 	{100, randomFold},
 	{50, randomRotateSmallAngle},
 	{30, randomRotate},
+	//{20, searchForEdges}, // TODO: Causes too many problems and crashes.
 	{1, shortMoveTopLeft},
 	{1, shortMoveTop},
 	{1, shortMoveTopRight},
@@ -116,10 +118,30 @@ func getRandomEdge(f *data.Figure, h *data.Hole) *data.Edge {
 	unfits := fitness.ListUnfits(*f, *h)
 	nbUnfits := len(unfits)
 
+	if len(f.Edges) == 0 {
+		fmt.Println(f)
+	}
 	if true {
 		return f.Edges[rand.Intn(len(f.Edges))]
 	}
 	return unfits[rand.Intn(nbUnfits)].Edge
+}
+
+func searchForEdges(f *data.Figure, h *data.Hole, eps int) string {
+	var v *data.Vertex
+	unfits := fitness.ListUnfits(*f, *h)
+	if len(unfits) > 0 {
+		vertices := unfits[rand.Intn(len(unfits))].Vertices
+		if len(vertices) > 0 {
+			v = vertices[rand.Intn(len(vertices))]
+			res := search.Solve(f, h, v, eps)
+			*f = *res
+			if len(f.Edges) == 0 {
+				panic("bad search result")
+			}
+		}
+	}
+	return fmt.Sprintf("searchForEdges(%s)", v)
 }
 
 func randomAlter(f *data.Figure, h *data.Hole, eps int) string {
