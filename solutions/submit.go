@@ -128,7 +128,9 @@ func main()  {
 		log.Fatal("Cannot store submissions", err)
 	}
 	defer output.Close()
-	err = json.NewEncoder(output).Encode(submitted)
+	enc := json.NewEncoder(output)
+	enc.SetIndent("", "  ")
+	err = enc.Encode(submitted)
 	if err != nil {
 		log.Fatal("Cannot serialize submissions", err)
 	}
