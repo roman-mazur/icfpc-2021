@@ -22,17 +22,9 @@ type GenerationItem struct {
 type Generation []GenerationItem
 
 func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Generation {
-	outSize := size + len(parents)
-	gen := make(Generation, outSize)
+	gen := make(Generation, size+len(parents))
 	wg := new(sync.WaitGroup)
-	wg.Add(outSize)
-
-	for i := 0; i < len(parents); i++ {
-		go (func(i int) {
-			defer wg.Done()
-			gen[i] = parents[i]
-		})(i)
-	}
+	wg.Add(size)
 
 	for i := len(parents); i < size+len(parents); i++ {
 		go (func(i int) {
@@ -58,6 +50,10 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 				}
 			}
 		})(i)
+	}
+
+	for i := 0; i < len(parents); i++ {
+		gen[i] = parents[i]
 	}
 
 	wg.Wait()
