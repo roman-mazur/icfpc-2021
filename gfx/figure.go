@@ -56,14 +56,18 @@ func (fe *FigureEntity) render(imd *imdraw.IMDraw, e *data.Edge, i int) {
 		rMax := float64(fe.ε) / float64(1000000)
 
 		c := pixel.Clamp(r/rMax, 0, 1)
-		hsl := goColor.HSL{
-			H: (1.0 / 3.0) - (c / 3),
-			S: 1,
-			L: 0.5,
-		}
+		if c >= 1 {
+			imd.Color = colornames.Black
+		} else {
+			hsl := goColor.HSL{
+				H: (1.0 / 3.0) - (c / 3),
+				S: 1,
+				L: 0.5,
+			}
 
-		rgb := hsl.ToRGB()
-		imd.Color = pixel.RGB(rgb.R, rgb.G, rgb.B)
+			rgb := hsl.ToRGB()
+			imd.Color = pixel.RGB(rgb.R, rgb.G, rgb.B)
+		}
 	}
 
 	v1 := e.A.PVec().Scaled(k)
