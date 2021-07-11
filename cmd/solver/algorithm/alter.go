@@ -10,16 +10,9 @@ import (
 	"github.com/roman-mazur/icfpc-2021/transform"
 )
 
-const (
-	actionFold = iota
-	actionRotate
-
-	actionCount
-)
-
-var actionList = map[int]func(*data.Figure, *data.Hole, int) string{
-	actionFold:   randomFold,
-	actionRotate: randomRotate,
+var actionList = []func(*data.Figure, *data.Hole, int) string{
+	// randomFold,
+	randomRotate,
 }
 
 func randomFold(f *data.Figure, h *data.Hole, eps int) string {
@@ -35,7 +28,7 @@ func randomFold(f *data.Figure, h *data.Hole, eps int) string {
 }
 
 func randomRotate(f *data.Figure, h *data.Hole, eps int) string {
-	randomAngle := math.Pi * rand.Float64()
+	randomAngle := 2*math.Pi * rand.Float64()
 
 	edge := getRandomEdge(f, h)
 	transform.Rotate(f, edge, randomAngle, eps)
@@ -53,5 +46,5 @@ func getRandomEdge(f *data.Figure, h *data.Hole) *data.Edge {
 }
 
 func randomAlter(f *data.Figure, h *data.Hole, eps int) string {
-	return actionList[rand.Intn(actionCount)](f, h, eps)
+	return actionList[rand.Intn(len(actionList))](f, h, eps)
 }
