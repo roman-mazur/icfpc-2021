@@ -23,7 +23,6 @@ type Visualizer struct {
 	miscEdges [][]*data.Edge
 
 	targetFigure *FigureEntity
-	// onDrag       func(mousePos pixel.Vec)
 }
 
 func NewVisualizer(cfg pixelgl.WindowConfig, pb *data.Problem) *Visualizer {
