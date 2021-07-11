@@ -63,6 +63,23 @@ func (e Edge) OtherV(v *Vertex) *Vertex {
 type Hole struct {
 	Vertices []Vertex
 	Edges    []*Edge
+
+	center *Vertex
+}
+
+func (h *Hole) Center() Vertex {
+	if h.center != nil {
+		return *h.center
+	}
+	res := Vertex{}
+	for _, v := range h.Vertices {
+		res.X += v.X
+		res.Y += v.Y
+	}
+	res.X /= float64(len(h.Vertices))
+	res.Y /= float64(len(h.Vertices))
+	h.center = &res
+	return res
 }
 
 type Figure struct {

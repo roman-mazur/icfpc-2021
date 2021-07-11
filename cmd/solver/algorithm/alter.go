@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 
+	"github.com/faiface/pixel"
 	"github.com/roman-mazur/icfpc-2021/cmd/solver/search"
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/fitness"
@@ -20,6 +21,7 @@ var actionList = []action{
 	{100, randomFold},
 	{50, randomRotateSmallAngle},
 	{30, randomRotate},
+	{5, moveToCenter},
 	//{20, searchForEdges}, // TODO: Causes too many problems and crashes.
 	{1, shortMoveTopLeft},
 	{1, shortMoveTop},
@@ -68,6 +70,13 @@ func shortMoveBottom(f *data.Figure, h *data.Hole, ε int) string {
 }
 func shortMoveBottomRight(f *data.Figure, h *data.Hole, ε int) string {
 	return shortMove(f, data.Vertex{X: 1, Y: -1})
+}
+
+func moveToCenter(f *data.Figure, h *data.Hole, ε int) string {
+	target := h.Center()
+	v := &f.Vertices[rand.Intn(len(f.Vertices))]
+	transform.Matrix(f, v, pixel.IM.Moved(pixel.V(target.X - v.X, target.Y - v.Y)), ε)
+	return fmt.Sprintf("moveToCenter(%s)", target)
 }
 
 func randomShortMove(f *data.Figure, h *data.Hole, eps int) string {
