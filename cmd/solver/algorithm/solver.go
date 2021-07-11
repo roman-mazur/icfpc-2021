@@ -41,7 +41,7 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 				}
 
 				flattened := candidate.FlattenToGrid()
-				score := fitness.FitScore(candidate, h)
+				score := fitness.FitScore(flattened, h)
 				//log.Println(iter, i, " valid ", score, applied)
 				gen[i] = GenerationItem{
 					Id:        i,
