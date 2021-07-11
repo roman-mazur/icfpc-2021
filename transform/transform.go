@@ -17,7 +17,7 @@ const (
 
 const eps = 0.000001
 
-const debug = true
+const debug = false
 
 func log(format string, args ...interface{}) {
 	if debug {

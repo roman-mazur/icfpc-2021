@@ -23,15 +23,16 @@ func fatalUsage() {
 
 func main() {
 	log.Println("Hello ICFP Contest!")
-	if len(os.Args) < 2 {
-		fatalUsage()
+	problemPath := "problems/problem.3"
+	if len(os.Args) >= 2 {
+		problemPath = os.Args[1]
 	}
 
 	go profiling.Start()
 
 	iteration := 1000
 
-	pb := data.ParseProblem(os.Args[1])
+	pb := data.ParseProblem(problemPath)
 	if len(os.Args) > 2 {
 		iteration, _ = strconv.Atoi(os.Args[2])
 	}
@@ -44,13 +45,13 @@ func main() {
 
 	unfit := cmd.Analyze(pb, original, false)
 	if len(unfit) == 0 {
-		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(os.Args[1], "/", "_"), -1.0/bestMatch.Score)
+		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), -1.0/bestMatch.Score)
 		cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
 	}
 
 	gfx.DrawEdges(
 		pixelgl.WindowConfig{
-			Title:  filepath.Base(os.Args[1]),
+			Title:  filepath.Base(problemPath),
 			Bounds: pixel.R(0, 0, 1000, 800),
 		},
 		pb.Hole.Edges,
