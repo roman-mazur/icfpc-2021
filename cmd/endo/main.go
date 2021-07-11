@@ -26,7 +26,7 @@ func main() {
 
 	unfitEdges := cmd.Analyze(pb, original, true)
 
-	cmd.WriteSolution(pb.Figure.Solution(), 5)
+	cmd.WriteSolution(pb.Figure.Solution(), "5")
 
 	gfx.DrawEdges(
 		pixelgl.WindowConfig{

@@ -28,5 +28,5 @@ func TestFitScore_Fits(t *testing.T) {
 
 	score := FitScore(smallFigure, bigHole)
 
-	assert.Assert(t, score == 0)
+	assert.Assert(t, score < 0)
 }
