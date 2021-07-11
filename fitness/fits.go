@@ -6,8 +6,10 @@ import "github.com/roman-mazur/icfpc-2021/data"
 // Could be optimized (for instance, checking if any point of the data.Figure vertices are in the data.Hole, and check if no
 // data.Figure's edges intersect with data.Hole edges.)
 func Fit(f data.Figure, h data.Hole) bool {
-	if !h.Contain(f.Vertices[0]) {
-		return false
+	for _, v := range f.Vertices {
+		if !h.Contain(v) {
+			return false
+		}
 	}
 
 	for _, e := range f.Edges {

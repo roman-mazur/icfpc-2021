@@ -10,7 +10,7 @@ import (
 	"github.com/roman-mazur/icfpc-2021/fitness"
 )
 
-var GenerationSize = 64
+var GenerationSize = 1024
 
 type GenerationItem struct {
 	Id     int
