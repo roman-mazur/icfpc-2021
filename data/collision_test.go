@@ -49,7 +49,7 @@ func TestIntersect(t *testing.T) {
 		{newEdge(v10, v20), newEdge(v10, v20), false}, // Collinear
 		{newEdge(v10, v10), newEdge(v02, v20), false}, // Collinear
 		{newEdge(v10, v10), newEdge(v10, v22), false}, // Collinear
-		{newEdge(Vertex{-1000000, 0}, v00), newEdge(v12, v01), false},
+		{newEdge(Vertex{X: -1000000, Y: 0}, v00), newEdge(v12, v01), false},
 	}
 
 	for _, test := range suite {
@@ -84,39 +84,39 @@ func TestContain(t *testing.T) {
 
 	square := Hole{
 		Vertices: []Vertex{
-			Vertex{10, 0},
-			Vertex{20, 10},
-			Vertex{10, 20},
-			Vertex{0, 10},
+			Vertex{X: 10, Y: 0},
+			Vertex{X: 20, Y: 10},
+			Vertex{X: 10, Y: 20},
+			Vertex{X: 0, Y: 10},
 		},
 	}
 	square.FillEdges()
 
 	concave := Hole{
 		Vertices: []Vertex{
-			Vertex{0, 0},
-			Vertex{30, 30},
-			Vertex{60, 0},
-			Vertex{60, 60},
-			Vertex{0, 60},
+			Vertex{X: 0, Y: 0},
+			Vertex{X: 30, Y: 30},
+			Vertex{X: 60, Y: 0},
+			Vertex{X: 60, Y: 60},
+			Vertex{X: 0, Y: 60},
 		},
 	}
 	concave.FillEdges()
 
 	var suite = []test{
-		test{square, Vertex{10, 10}, true},
-		test{square, Vertex{5, 5}, true},
-		test{square, Vertex{10, 0}, true},
+		test{square, Vertex{X: 10, Y: 10}, true},
+		test{square, Vertex{X: 5, Y: 5}, true},
+		test{square, Vertex{X: 10, Y: 0}, true},
 		test{square, v00, false},
 
-		test{concave, Vertex{6, 20}, true},
-		test{concave, Vertex{50, 40}, true},
-		test{concave, Vertex{30, 30}, true},
-		test{concave, Vertex{0, 0}, true},
-		test{concave, Vertex{60, 0}, true},
-		test{concave, Vertex{30, 10}, false},
-		test{concave, Vertex{10, 75}, false},
-		test{concave, Vertex{75, 10}, false},
+		test{concave, Vertex{X: 6, Y: 20}, true},
+		test{concave, Vertex{X: 50, Y: 40}, true},
+		test{concave, Vertex{X: 30, Y: 30}, true},
+		test{concave, Vertex{X: 0, Y: 0}, true},
+		test{concave, Vertex{X: 60, Y: 0}, true},
+		test{concave, Vertex{X: 30, Y: 10}, false},
+		test{concave, Vertex{X: 10, Y: 75}, false},
+		test{concave, Vertex{X: 75, Y: 10}, false},
 	}
 
 	for _, test := range suite {

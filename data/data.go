@@ -4,14 +4,32 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math"
 	"unsafe"
 
 	"github.com/faiface/pixel"
 )
 
+type Tristate int
+
+const (
+	TristateTrue Tristate = iota
+	TristateFalse
+	TristateUnset
+)
+
+type VertexMetadata struct {
+	Score    float64
+	IsInHole Tristate
+}
+
+func (m *VertexMetadata) Reset() {
+	m.Score = 0
+	m.IsInHole = TristateUnset
+}
+
 type Vertex struct {
-	X, Y float64
+	X, Y     float64
+	Metadata VertexMetadata
 }
 
 func (v Vertex) String() string {
@@ -86,7 +104,9 @@ func (f *Figure) Solution() Solution {
 }
 
 func (e Edge) SqLength() float64 {
-	return math.Pow(float64(e.A.X-e.B.X), 2) + math.Pow(float64(e.A.Y-e.B.Y), 2)
+	x := e.A.X - e.B.X
+	y := e.A.Y - e.B.Y
+	return x*x + y*y
 }
 
 // Line of this edge: a*x + b*y + c = 0.

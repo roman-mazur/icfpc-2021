@@ -14,6 +14,7 @@ import (
 	"github.com/roman-mazur/icfpc-2021/cmd/solver/algorithm"
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/gfx"
+	"github.com/roman-mazur/icfpc-2021/profiling"
 )
 
 func fatalUsage() {
@@ -25,6 +26,8 @@ func main() {
 	if len(os.Args) < 2 {
 		fatalUsage()
 	}
+
+	go profiling.Start()
 
 	iteration := 1000
 

@@ -60,7 +60,18 @@ func (e Edge) Touch(w Edge) bool {
 // It computes the number of collisions with hole's edges, left and right from the given vertex. If it's odd, the
 // vertex is inside. If it's even, the vertex is outside.
 // It is inspired by the concave polygon collision described here: http://www.alienryderflex.com/polygon/
-func (h Hole) Contain(v Vertex) bool {
+func (h Hole) Contain(v Vertex) (result bool) {
+	//if v.Metadata.IsInHole != TristateUnset {
+	//	return v.Metadata.IsInHole == TristateTrue
+	//}
+	//defer (func() {
+	//	if result {
+	//		v.Metadata.IsInHole = TristateTrue
+	//	} else {
+	//		v.Metadata.IsInHole = TristateFalse
+	//	}
+	//})()
+
 	for _, hv := range h.Vertices {
 		if v.Equal(hv) {
 			return true

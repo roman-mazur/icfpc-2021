@@ -24,6 +24,7 @@ func (mt *matrixTransformer) apply(v *data.Vertex) {
 	newPos := mt.m.Project(v.PVec())
 	v.X = newPos.X
 	v.Y = newPos.Y
+	v.Metadata.Reset()
 	mt.transformed[v] = struct{}{}
 
 	for _, candidate := range mt.f.GetConnectedVertices(v) {

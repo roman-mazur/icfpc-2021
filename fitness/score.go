@@ -19,6 +19,10 @@ func FitScore(f data.Figure, h data.Hole) (score float64) {
 	for _, u := range unfits {
 		for _, v := range u.Vertices {
 			vertScore := math.MaxFloat64
+			if s := v.Metadata.Score; s > 0 {
+				score += s
+				continue
+			}
 
 			for _, hv := range h.Vertices {
 				dist := data.Edge{A: v, B: &hv}.SqLength()
@@ -29,6 +33,7 @@ func FitScore(f data.Figure, h data.Hole) (score float64) {
 			}
 
 			score += vertScore
+			v.Metadata.Score = vertScore
 		}
 		score += float64(nbVertices)
 	}

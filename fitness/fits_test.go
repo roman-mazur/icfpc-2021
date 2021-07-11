@@ -11,10 +11,10 @@ import (
 func genBigShape() (data.Hole, data.Figure) {
 	bigHole := data.Hole{
 		Vertices: []data.Vertex{
-			data.Vertex{0, 0},
-			data.Vertex{1000, 0},
-			data.Vertex{1000, 1000},
-			data.Vertex{0, 1000},
+			data.Vertex{X: 0, Y: 0},
+			data.Vertex{X: 1000, Y: 0},
+			data.Vertex{X: 1000, Y: 1000},
+			data.Vertex{X: 0, Y: 1000},
 		},
 	}
 	bigHole.FillEdges()
@@ -27,10 +27,10 @@ func genBigShape() (data.Hole, data.Figure) {
 func genSmallShape() (data.Hole, data.Figure) {
 	smallHole := data.Hole{
 		Vertices: []data.Vertex{
-			data.Vertex{0, 0},
-			data.Vertex{1, 0},
-			data.Vertex{1, 1},
-			data.Vertex{0, 1},
+			data.Vertex{X: 0, Y: 0},
+			data.Vertex{X: 1, Y: 0},
+			data.Vertex{X: 1, Y: 1},
+			data.Vertex{X: 0, Y: 1},
 		},
 	}
 	smallHole.FillEdges()
@@ -47,7 +47,7 @@ func TestFigureFits(t *testing.T) {
 		expect bool
 	}
 
-	line := []data.Vertex{data.Vertex{10, 10}, data.Vertex{-10, -10}}
+	line := []data.Vertex{data.Vertex{X: 10, Y: 10}, data.Vertex{X: -10, Y: -10}}
 	lineFigure := data.Figure{Vertices: line, Edges: []*data.Edge{&data.Edge{A: &line[0], B: &line[1]}}}
 
 	bigHole, bigFigure := genBigShape()

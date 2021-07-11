@@ -46,7 +46,6 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 
 				flattened := candidate.FlattenToGrid()
 				score := fitness.FitScore(flattened, h)
-				//log.Println(iter, i, " valid ", score, applied)
 				gen[i] = GenerationItem{
 					Id:        i,
 					Figure:    candidate,
@@ -83,7 +82,7 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 		bestScore = selection[0].Score
 
 		for _, res := range selection {
-			if res.Score <= result.Score {
+			if res.Score <= result.Score && res.Flattened.IsValid(f, ε) {
 				result.Figure = res.Flattened
 				result.Score = res.Score
 				dislikes = int(-1.0 / result.Score)

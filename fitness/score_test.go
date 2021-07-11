@@ -11,7 +11,7 @@ func TestFitScore(t *testing.T) {
 	_, bigFigure := genBigShape()
 	smallHole, smallFigure := genSmallShape()
 
-	line := []data.Vertex{data.Vertex{10, 10}, data.Vertex{-10, -10}}
+	line := []data.Vertex{data.Vertex{X: 10, Y: 10}, data.Vertex{X: -10, Y: -10}}
 	lineFigure := data.Figure{Vertices: line, Edges: []*data.Edge{&data.Edge{A: &line[0], B: &line[1]}}}
 
 	poorScore := FitScore(bigFigure, smallHole)
