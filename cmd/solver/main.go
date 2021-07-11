@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/faiface/pixel"
@@ -25,9 +26,14 @@ func main() {
 		fatalUsage()
 	}
 
+	iteration := 1000
+
 	pb := data.ParseProblem(os.Args[1])
+	if len(os.Args) > 2 {
+		iteration, _ = strconv.Atoi(os.Args[2])
+	}
 	original := pb.Figure.Copy()
-	bestMatch := algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, 1000)
+	bestMatch := algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, iteration)
 	pb.Figure = &bestMatch.Figure
 
 	unfit := cmd.Analyze(pb, original, false)
