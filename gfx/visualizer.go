@@ -81,11 +81,12 @@ func (vis *Visualizer) Start() {
 	})
 }
 
-func (vis *Visualizer) PushEdges(edges []*data.Edge, selectable bool, thickness float64, showIndexes bool) {
+func (vis *Visualizer) PushEdges(origEdges []*data.Edge, edges []*data.Edge, selectable bool, thickness float64, showIndexes bool) {
 	vis.meshes = append(vis.meshes, &EdgeMesh{
+		origEdges:   origEdges,
 		edges:       edges,
 		selectable:  selectable,
-		selected:    nil,
+		selectedIdx: -1,
 		thickness:   thickness,
 		color:       colors[len(vis.meshes)],
 		showIndexes: showIndexes,
@@ -95,33 +96,35 @@ func (vis *Visualizer) PushEdges(edges []*data.Edge, selectable bool, thickness 
 // Dirty mouse selection
 func (vis *Visualizer) updateInputs() {
 	if vis.win.Pressed(pixelgl.MouseButton1) && vis.win.MousePreviousPosition() != vis.win.MousePosition() {
-		vis.OnDrag(vis.meshes[1].edges[5], vis.win.MousePosition())
+		vis.OnDrag(vis.meshes[1].edges[0], vis.win.MousePosition())
 	}
 
-	// if !vis.win.JustReleased(pixelgl.MouseButton1) {
-	// 	return
-	// }
+	return
 
-	// found := false
-	// for _, m := range vis.meshes {
-	// 	m.selected = nil
+	if !vis.win.MouseInsideWindow() {
+		return
+	}
 
-	// 	if !m.selectable || found {
-	// 		continue
-	// 	}
+	found := false
+	for _, m := range vis.meshes {
+		m.selectedIdx = -1
 
-	// 	for _, e := range m.edges {
-	// 		mousePos := vis.win.MousePosition().ScaledXY(pixel.V(1, -1))
-	// 		mousePos.Y += vis.win.Bounds().H() + marginTop
-	// 		l := pixel.L(e.A.PVec().Scaled(k), e.B.PVec().Scaled(k))
+		if !m.selectable || found {
+			continue
+		}
 
-	// 		if l.IntersectRect(pixel.R(mousePos.X-10, mousePos.Y-10, mousePos.X+10, mousePos.Y+10)) == pixel.ZV {
-	// 			continue
-	// 		}
+		for i, e := range m.edges {
+			mousePos := vis.win.MousePosition().ScaledXY(pixel.V(1, -1))
+			mousePos.Y += vis.win.Bounds().H() + marginTop
+			l := pixel.L(e.A.PVec().Scaled(k), e.B.PVec().Scaled(k))
 
-	// 		m.selected = e
-	// 		found = true
-	// 		break
-	// 	}
-	// }
+			if l.IntersectCircle(pixel.C(mousePos, 5)) == pixel.ZV {
+				continue
+			}
+
+			m.selectedIdx = i
+			found = true
+			break
+		}
+	}
 }

@@ -13,6 +13,8 @@ import (
 	"golang.org/x/image/font/basicfont"
 )
 
+// This is deprecated, Visualizer should be used.
+
 var (
 	k         = 6.0 // temp scale
 	marginTop = 6.0
