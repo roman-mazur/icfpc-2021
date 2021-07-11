@@ -22,11 +22,15 @@ type GenerationItem struct {
 type Generation []GenerationItem
 
 func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Generation {
-	gen := make(Generation, size)
+	gen := make(Generation, size+len(parents))
 	wg := new(sync.WaitGroup)
 	wg.Add(size)
 
-	for i := 0; i < size; i++ {
+	for i := 0; i < len(parents); i++ {
+		gen[i] = parents[i]
+	}
+
+	for i := len(parents); i < size+len(parents); i++ {
 		go (func(i int) {
 			defer wg.Done()
 			parent := parents[rand.Intn(len(parents))]
@@ -64,9 +68,9 @@ func newGeneration(parents []GenerationItem, h data.Hole, ε, size, iter int) Ge
 
 func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 	selection := []GenerationItem{}
-	parents := []GenerationItem{{Figure: f}}
+	parents := []GenerationItem{{Figure: f, Score: fitness.FitScore(f, h)}}
 	bestScore := 0.0
-	dislikes := 0.0
+	dislikes := 0
 
 	for i := 0; i < iter; i++ {
 		log.Println("New generation", i, "/", iter, "- gen size:", GenerationSize, "- dislikes:", dislikes, "best generation score:", bestScore)
@@ -79,15 +83,10 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 		bestScore = selection[0].Score
 
 		for _, res := range selection {
-			if res.Score < 0 && res.Flattened.IsValid(f, ε) {
-				// The lower, the better
-				if res.Score > result.Score {
-					continue
-				}
-
+			if res.Score <= result.Score {
 				result.Figure = res.Flattened
 				result.Score = res.Score
-				dislikes = -1.0 / result.Score
+				dislikes = int(-1.0 / result.Score)
 			}
 		}
 	}

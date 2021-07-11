@@ -45,7 +45,6 @@ func main() {
 		cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
 	}
 
-	os.Exit(0)
 	gfx.DrawEdges(
 		pixelgl.WindowConfig{
 			Title:  filepath.Base(os.Args[1]),
