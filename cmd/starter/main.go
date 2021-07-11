@@ -22,15 +22,18 @@ func main() {
 	}
 
 	pb := data.ParseProblem(os.Args[1])
-	figCopy := pb.Figure.Copy()
+
+	// figCopy := pb.Figure.Copy()
 
 	vis := gfx.NewVisualizer(pixelgl.WindowConfig{
 		Title:  "Hello ICFP Contest!",
 		Bounds: pixel.R(0, 0, 1000, 800),
 	}, pb)
 
-	vis.PushFigure(&figCopy, true, 2, false)
-	vis.PushFigure(pb.Figure, false, 2, true)
+	// vis.PushFigure(s.Figure, true, 2, true)
+	// vis.PushFigure(pb.Figure, false, 2, true)
+
+	vis.PushEdges(pb.Figure.Edges)
 
 	vis.OnVertexDrag = func(v *data.Vertex, mousePos pixel.Vec) {
 		v.X = mousePos.X

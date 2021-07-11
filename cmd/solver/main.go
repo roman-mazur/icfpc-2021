@@ -18,9 +18,9 @@ import (
 )
 
 var (
-	asService = flag.Bool("as-service", false, "No UI")
+	asService  = flag.Bool("as-service", false, "No UI")
 	iterations = flag.Int("iterations", 1000, "Number of iterations")
-	genSize = flag.Int("gen-size", 1024, "Gen size")
+	genSize    = flag.Int("gen-size", 1024, "Gen size")
 )
 
 func fatalUsage() {
@@ -47,6 +47,8 @@ func main() {
 	if len(unfit) == 0 {
 		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), -1.0/bestMatch.Score)
 		cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
+
+		fmt.Printf("Wrote %s\n", solutionName)
 	}
 
 	if !*asService {

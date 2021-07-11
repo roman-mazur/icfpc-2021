@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"github.com/faiface/pixel/text"
 	"github.com/roman-mazur/icfpc-2021/data"
@@ -17,8 +18,9 @@ type Visualizer struct {
 	win        *pixelgl.Window
 	asciiAtlas *text.Atlas
 
-	figures []*FigureEntity
-	pb      *data.Problem
+	pb        *data.Problem
+	figures   []*FigureEntity
+	miscEdges [][]*data.Edge
 
 	draggedVtx *data.Vertex
 
@@ -59,13 +61,29 @@ func (vis *Visualizer) Start() {
 			thickness: 2,
 		})
 
+		builtMiscEdges := []*imdraw.IMDraw{}
+		for i, e := range vis.miscEdges {
+			builtMiscEdges = append(builtMiscEdges, BuildEdges(EdgeBuilder{
+				edges:     e,
+				baseColor: colors[i+2%len(colors)],
+				thickness: 2,
+			}))
+		}
+
+		grid := buildGrid(win.Bounds().Max.Scaled(1 / k))
+
 		for !vis.win.Closed() && !vis.win.JustReleased(pixelgl.KeyEscape) {
 			startTime := time.Now()
 
 			vis.win.Clear(colornames.Gray)
 			vis.updateInputs()
 
+			grid.Draw(win)
 			hole.Draw(win)
+
+			for _, be := range builtMiscEdges {
+				be.Draw(win)
+			}
 
 			for _, f := range vis.figures {
 				f.Build().Draw(vis.win)
@@ -106,6 +124,14 @@ func (vis *Visualizer) PushFigure(fig *data.Figure, selectable bool, thickness f
 	})
 
 	return vis
+}
+
+func (vis *Visualizer) PushEdges(edges []*data.Edge) {
+	vis.miscEdges = append(vis.miscEdges, edges)
+}
+
+func (vis *Visualizer) buildStaticObjects() {
+
 }
 
 // Dirty mouse selection
