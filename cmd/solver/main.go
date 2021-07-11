@@ -13,6 +13,7 @@ import (
 	"github.com/roman-mazur/icfpc-2021/cmd"
 	"github.com/roman-mazur/icfpc-2021/cmd/solver/algorithm"
 	"github.com/roman-mazur/icfpc-2021/data"
+	"github.com/roman-mazur/icfpc-2021/fitness"
 	"github.com/roman-mazur/icfpc-2021/gfx"
 )
 
@@ -53,22 +54,44 @@ func main() {
 	unfit := cmd.Analyze(pb, *origPb.Figure, *asService)
 	if len(unfit) == 0 {
 		score := int(-1.0 / bestMatch.Score)
+		log.Println("Score:", score)
 		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), float64(score))
 		if cmd.IsBetterSolution(solutionName, score) {
 			cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
 			fmt.Printf("Wrote %s\n", solutionName)
 		} else {
-			fmt.Printf("Didn't wrote %s: a better solution exists for score %d\n", solutionName, score)
+			fmt.Printf("Didn't write %s: a better solution exists for score %d\n", solutionName, score)
 		}
 
 	}
 
 	if !*asService {
-		vis := gfx.NewVisualizer(pixelgl.WindowConfig{
-			Title:  filepath.Base(problemPath),
-			Bounds: pixel.R(0, 0, 1000, 800),
-		}, &origPb)
+		wasValid := len(unfit) == 0
+		isValid := false
 
-		vis.PushFigure(pb.Figure, true, 2, true).PushEdges(unfit).Start()
+		for once := true; once || wasValid && !isValid; once = false {
+			vis := gfx.NewVisualizer(pixelgl.WindowConfig{
+				Title:  filepath.Base(problemPath),
+				Bounds: pixel.R(0, 0, 1000, 800),
+			}, &origPb)
+
+			vis.PushFigure(pb.Figure, true, 2, true).PushEdges(unfit).Start()
+
+			unfit = cmd.Analyze(pb, *pb.Figure, false)
+			isValid = len(unfit) == 0
+		}
+
+		if len(unfit) == 0 {
+			score := int(-1.0 / fitness.FitScore(*pb.Figure, *pb.Hole))
+			log.Println("New score:", score)
+
+			solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), float64(score))
+			if cmd.IsBetterSolution(solutionName, score) {
+				cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
+				fmt.Printf("Wrote %s\n", solutionName)
+			} else {
+				fmt.Printf("Didn't write %s: a better solution exists for score %d\n", solutionName, score)
+			}
+		}
 	}
 }

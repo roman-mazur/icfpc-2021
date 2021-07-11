@@ -4,8 +4,11 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
+	"os/signal"
 	"sort"
 	"sync"
+	"syscall"
 
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/fitness"
@@ -73,6 +76,13 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 	worstScore := 0.0
 	noChangeSince := 0
 
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		return
+	}()
+
 	for i := 0; i < iter && noChangeSince < max(iter/5, 300); i++ {
 		log.Println("New generation", i, "/", iter, "- gen size:", GenerationSize, "- lastChange:", noChangeSince, "- dislikes:", dislikes, "best / worst generation score:", bestScore, "/", worstScore)
 		wg := new(sync.WaitGroup)
@@ -112,17 +122,21 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 		})
 		if selection[0].Score < bestScore {
 			bestScore = selection[0].Score
-			noChangeSince = 0
 		}
 
-		noChangeSince++
+		if dislikes > 0 {
+			noChangeSince++
+		}
 		for _, res := range selection {
 			if result.Id == -1 || (res.Score <= result.Score && res.Flattened.IsValid(f, ε)) {
+				noChangeSince = 0
 				result.Figure = res.Flattened
 				result.Score = res.Score
+				fmt.Println("New result")
 
-				if res.Score < 0 {
+				if result.Id == -1 && res.Flattened.IsValid(f, ε) || result.Id == 0 {
 					result.Id = 0 // Always set something as a result.
+					fmt.Println("New valid result")
 
 					dislikes = int(-1.0 / result.Score)
 				}
