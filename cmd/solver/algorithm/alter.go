@@ -17,7 +17,8 @@ type action struct {
 
 var actionList = []action{
 	{100, randomFold},
-	{100, randomRotate},
+	{50, randomRotateSmallAngle},
+	{30, randomRotate},
 	{1, shortMoveTopLeft},
 	{1, shortMoveTop},
 	{1, shortMoveTopRight},
@@ -92,6 +93,15 @@ func randomFold(f *data.Figure, h *data.Hole, eps int) string {
 	edge := getRandomEdge(f, h)
 	transform.Fold(f, edge, direction)
 	return fmt.Sprintf("randomFold(%s)", edge)
+}
+
+func randomRotateSmallAngle(f *data.Figure, h *data.Hole, eps int) string {
+	smallAngle := math.Pi / 6.0
+	randomAngle := rand.Float64()*2.0*smallAngle - smallAngle
+
+	edge := getRandomEdge(f, h)
+	transform.Rotate(f, edge, randomAngle, eps)
+	return fmt.Sprintf("randomRotateSmall(%s, %f)", edge, 180*randomAngle/math.Pi)
 }
 
 func randomRotate(f *data.Figure, h *data.Hole, eps int) string {
