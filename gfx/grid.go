@@ -15,8 +15,11 @@ func buildGrid(max pixel.Vec) *imdraw.IMDraw {
 			imd.Push(pixel.V(float64(x), float64(y)).Scaled(k))
 		}
 	}
+	println("push done")
 
 	imd.Circle(1, 0)
 	imd.Reset()
+
+	// imd.Reset()
 	return imd
 }

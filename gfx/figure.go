@@ -38,11 +38,11 @@ func (fe *FigureEntity) Build() *imdraw.IMDraw {
 	})
 }
 
-func (fe *FigureEntity) BuildLabels(atlas *text.Atlas) []*text.Text {
+func (fe *FigureEntity) BuildLabels(atlas *text.Atlas, m *pixel.Matrix) []*text.Text {
 	var labels []*text.Text
 
 	for i, e := range fe.fig.Edges {
-		txt := text.New(e.PLine().Center().Scaled(k), atlas)
+		txt := text.New(m.Unproject(e.PLine().Center().Scaled(k)), atlas)
 		fmt.Fprintf(txt, "%d", i)
 
 		labels = append(labels, txt)

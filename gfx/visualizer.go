@@ -1,7 +1,6 @@
 package gfx
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/faiface/pixel"
@@ -14,8 +13,7 @@ import (
 )
 
 type Visualizer struct {
-	camPos  pixel.Vec
-	camZoom float64
+	cam Camera
 
 	winCfg     pixelgl.WindowConfig
 	win        *pixelgl.Window
@@ -30,9 +28,10 @@ type Visualizer struct {
 
 func NewVisualizer(cfg pixelgl.WindowConfig, pb *data.Problem) *Visualizer {
 	return &Visualizer{
-		winCfg:     cfg,
-		camPos:     pixel.ZV,
-		camZoom:    1.0,
+		winCfg: cfg,
+		cam: Camera{
+			pos: cfg.Bounds.Center(),
+		},
 		figures:    make([]*FigureEntity, 0),
 		asciiAtlas: text.NewAtlas(basicfont.Face7x13, text.ASCII),
 		pb:         pb,
@@ -46,22 +45,7 @@ func (vis *Visualizer) Start() {
 			panic(err)
 		}
 
-		// Trick to invert origin
-		win.SetMatrix(
-			flipVertically.Chained(
-				pixel.IM.Moved(
-					pixel.V(0, win.Bounds().H()+marginTop),
-				),
-			),
-		)
-
 		vis.win = win
-		txt := text.New(pixel.V(10, 10), vis.asciiAtlas)
-
-		hole := BuildEdges(EdgeBuilder{
-			edges:     vis.pb.Hole.Edges,
-			thickness: 2,
-		})
 
 		grid := buildGrid(win.Bounds().Max.Scaled(1 / k))
 
@@ -77,15 +61,27 @@ func (vis *Visualizer) Start() {
 		for !vis.win.Closed() && !vis.win.JustReleased(pixelgl.KeyEscape) {
 			startTime := time.Now()
 
-			// cam := pixel.IM.Scaled(vis.camPos, vis.camZoom).Moved(win.Bounds().Center().Sub(vis.camPos))
-			// cam := pixel.IM.ScaledXY(pixel.ZV, pixel.V(1, -1)).Moved(win.Bounds().Center().Sub(vis.camPos))
-			// vis.win.SetMatrix(cam)
+			vis.cam.Update(vis.win)
 
 			vis.win.Clear(colornames.Gray)
 			vis.updateInputs()
 
 			grid.Draw(win)
+
+			hole := BuildEdges(EdgeBuilder{
+				edges:     vis.pb.Hole.Edges,
+				thickness: 2,
+			})
 			hole.Draw(win)
+
+			imd := imdraw.New(nil)
+
+			imd.Push(vis.cam.matrix.Unproject(vis.win.MousePosition()))
+
+			imd.Circle(4, 0)
+			imd.Reset()
+
+			imd.Draw(win)
 
 			for _, be := range builtMiscEdges {
 				be.Draw(win)
@@ -95,20 +91,17 @@ func (vis *Visualizer) Start() {
 				f.Build().Draw(vis.win)
 
 				if f.showIndexes {
-					for _, t := range f.BuildLabels(vis.asciiAtlas) {
-						t.Draw(vis.win, pixel.IM.ScaledXY(t.Bounds().Center(), pixel.V(1, -1)))
+					for _, t := range f.BuildLabels(vis.asciiAtlas, &vis.cam.matrix) {
+						t.Draw(vis.win, vis.cam.matrix)
 					}
 				}
+
 			}
 
-			txt.Draw(win, pixel.IM.ScaledXY(txt.Bounds().Center(), pixel.V(1, -1)))
 			vis.win.Update()
 
 			elapsed := time.Since(startTime)
 			toSleep := time.Duration(time.Second.Nanoseconds()/int64(maxFPS)) - elapsed
-
-			txt.Clear()
-			fmt.Fprintf(txt, "%d", time.Second/elapsed)
 
 			if toSleep > 0 {
 				time.Sleep(toSleep)
@@ -146,17 +139,16 @@ func (vis *Visualizer) updateInputs() {
 		return
 	}
 
-	mousePos := vis.win.MousePosition().ScaledXY(pixel.V(1, -1))
-	mousePos.Y += vis.win.Bounds().H() + marginTop
+	mousePos := vis.cam.matrix.Unproject(vis.win.MousePosition())
 
-	if vis.win.MouseScroll() != pixel.ZV {
-		vis.camZoom += vis.win.MouseScroll().Y * 0.2
-	}
+	// if vis.win.MouseScroll() != pixel.ZV {
+	// 	k += vis.win.MouseScroll().Y * 0.4
+	// }
 
-	if vis.win.Pressed(pixelgl.MouseButton3) && vis.win.MousePosition() != vis.win.MousePreviousPosition() {
+	if (vis.win.Pressed(pixelgl.MouseButton3) || vis.win.Pressed(pixelgl.MouseButton2)) && vis.win.MousePosition() != vis.win.MousePreviousPosition() {
 		test := vis.win.MousePreviousPosition().Sub(vis.win.MousePosition()).Normal()
-		vis.camPos.X += test.Y
-		vis.camPos.Y -= test.X
+		vis.cam.pos.X += test.Y
+		vis.cam.pos.Y -= test.X
 	}
 
 	if vis.win.JustPressed(pixelgl.MouseButton1) {
