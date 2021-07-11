@@ -51,10 +51,15 @@ func main() {
 
 	unfit := cmd.Analyze(pb, *origPb.Figure, *asService)
 	if len(unfit) == 0 {
-		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), -1.0/bestMatch.Score)
-		cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
+		score := int(-1.0 / bestMatch.Score)
+		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), float64(score))
+		if cmd.IsBetterSolution(solutionName, score) {
+			cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
+			fmt.Printf("Wrote %s\n", solutionName)
+		} else {
+			fmt.Printf("Didn't wrote %s: a better solution exists for score %d\n", solutionName, score)
+		}
 
-		fmt.Printf("Wrote %s\n", solutionName)
 	}
 
 	if !*asService {
