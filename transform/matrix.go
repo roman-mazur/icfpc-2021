@@ -5,6 +5,8 @@ import (
 	"github.com/roman-mazur/icfpc-2021/data"
 )
 
+const million = 1000000.0
+
 type matrixTransformer struct {
 	transformed map[*data.Vertex]struct{}
 	m           pixel.Matrix
@@ -27,7 +29,7 @@ func (mt *matrixTransformer) apply(v *data.Vertex) {
 	for _, candidate := range mt.f.GetConnectedVertices(v) {
 		oldEdge := &data.Edge{A: &oldV, B: candidate}
 		newEdge := &data.Edge{A: v, B: candidate}
-		if !data.GoodRatio(oldEdge, newEdge, mt.epsilon) {
+		if data.LengthRatio(oldEdge, newEdge) > float64(mt.epsilon)/million {
 			mt.apply(candidate)
 		}
 	}

@@ -6,6 +6,7 @@ import (
 	"math/rand"
 
 	"github.com/roman-mazur/icfpc-2021/data"
+	"github.com/roman-mazur/icfpc-2021/fitness"
 	"github.com/roman-mazur/icfpc-2021/transform"
 )
 
@@ -16,35 +17,41 @@ const (
 	actionCount
 )
 
-var actionList = map[int]func(*data.Figure, int) string{
+var actionList = map[int]func(*data.Figure, *data.Hole, int) string{
 	actionFold:   randomFold,
 	actionRotate: randomRotate,
 }
 
-func randomFold(f *data.Figure, eps int) string {
+func randomFold(f *data.Figure, h *data.Hole, eps int) string {
 	direction := transform.FoldRight
 
 	if rand.Intn(1) == 0 {
 		direction = transform.FoldLeft
 	}
 
-	edge := getRandomEdge(f)
+	edge := getRandomEdge(f, h)
 	transform.Fold(f, edge, direction)
 	return fmt.Sprintf("randomFold(%s)", edge)
 }
 
-func randomRotate(f *data.Figure, eps int) string {
+func randomRotate(f *data.Figure, h *data.Hole, eps int) string {
 	randomAngle := math.Pi * rand.Float64()
 
-	edge := getRandomEdge(f)
+	edge := getRandomEdge(f, h)
 	transform.Rotate(f, edge, randomAngle, eps)
 	return fmt.Sprintf("randomRotate(%s, %f)", edge, 180*randomAngle/math.Pi)
 }
 
-func getRandomEdge(f *data.Figure) *data.Edge {
-	return f.Edges[rand.Intn(len(f.Edges))]
+func getRandomEdge(f *data.Figure, h *data.Hole) *data.Edge {
+	unfits := fitness.ListUnfits(*f, *h)
+	nbUnfits := len(unfits)
+
+	if nbUnfits == 0 {
+		return f.Edges[rand.Intn(len(f.Edges))]
+	}
+	return unfits[rand.Intn(nbUnfits)].Edge
 }
 
-func randomAlter(f *data.Figure, eps int) string {
-	return actionList[rand.Intn(actionCount)](f, eps)
+func randomAlter(f *data.Figure, h *data.Hole, eps int) string {
+	return actionList[rand.Intn(actionCount)](f, h, eps)
 }
