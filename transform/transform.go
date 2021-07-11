@@ -17,7 +17,7 @@ const (
 
 const eps = 0.000001
 
-const debug = false
+const debug = true
 
 func log(format string, args ...interface{}) {
 	if debug {
@@ -148,5 +148,9 @@ func Fold(figure *data.Figure, edge *data.Edge, dir FoldDirection, excludes ...*
 
 // Rotate changes edge.B position rotating it by the delta.
 func Rotate(figure *data.Figure, edge *data.Edge, Δ float64, ε int) {
-	Matrix(figure, edge.B, pixel.IM.Rotated(edge.A.PVec(), Δ), ε)
+	RotateScale(figure, edge, Δ, ε, false)
+}
+
+func RotateScale(figure *data.Figure, edge *data.Edge, Δ float64, ε int, doScaling bool) {
+	MatrixScale(figure, edge.B, pixel.IM.Rotated(edge.A.PVec(), Δ), ε, doScaling)
 }
