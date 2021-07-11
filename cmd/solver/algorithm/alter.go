@@ -75,7 +75,7 @@ func shortMoveBottomRight(f *data.Figure, h *data.Hole, ε int) string {
 func moveToCenter(f *data.Figure, h *data.Hole, ε int) string {
 	target := h.Center()
 	v := &f.Vertices[rand.Intn(len(f.Vertices))]
-	transform.Matrix(f, v, pixel.IM.Moved(pixel.V(target.X - v.X, target.Y - v.Y)), ε)
+	transform.Matrix(f, v, pixel.IM.Moved(pixel.V(target.X-v.X, target.Y-v.Y)), ε)
 	return fmt.Sprintf("moveToCenter(%s)", target)
 }
 

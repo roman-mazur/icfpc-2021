@@ -52,8 +52,8 @@ func main() {
 	pb.Figure = &bestMatch.Figure
 
 	unfit := cmd.Analyze(pb, *origPb.Figure, *asService)
+	score := int(-1.0 / bestMatch.Score)
 	if len(unfit) == 0 {
-		score := int(-1.0 / bestMatch.Score)
 		log.Println("Score:", score)
 		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), float64(score))
 		if cmd.IsBetterSolution(solutionName, score) {
@@ -66,23 +66,24 @@ func main() {
 	}
 
 	if !*asService {
-		wasValid := len(unfit) == 0
-		isValid := false
+		var wasUpdated = true
+		var adjustedScore = bestMatch.Score
 
-		for once := true; once || wasValid && !isValid; once = false {
+		for once := true; once || wasUpdated && len(unfit) > 0; once = false {
 			vis := gfx.NewVisualizer(pixelgl.WindowConfig{
 				Title:  filepath.Base(problemPath),
 				Bounds: pixel.R(0, 0, 1000, 800),
 			}, &origPb)
 
-			vis.PushFigure(pb.Figure, true, 2, true).PushEdges(unfit).Start()
+			wasUpdated = vis.PushFigure(pb.Figure, true, 2, true).PushEdges(unfit).Start()
 
+			adjustedScore = fitness.FitScore(*pb.Figure, *pb.Hole)
+			log.Println("New score: ", int(-1.0/adjustedScore))
 			unfit = cmd.Analyze(pb, *pb.Figure, false)
-			isValid = len(unfit) == 0
 		}
 
-		if len(unfit) == 0 {
-			score := int(-1.0 / fitness.FitScore(*pb.Figure, *pb.Hole))
+		if len(unfit) == 0 && pb.Figure.IsValid(*origPb.Figure, origPb.Epsilon) {
+			score := int(-1.0 / adjustedScore)
 			log.Println("New score:", score)
 
 			solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), float64(score))

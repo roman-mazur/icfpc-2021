@@ -132,11 +132,9 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 				noChangeSince = 0
 				result.Figure = res.Flattened
 				result.Score = res.Score
-				fmt.Println("New result")
 
 				if result.Id == -1 && res.Flattened.IsValid(f, ε) || result.Id == 0 {
 					result.Id = 0 // Always set something as a result.
-					fmt.Println("New valid result")
 
 					dislikes = int(-1.0 / result.Score)
 				}
