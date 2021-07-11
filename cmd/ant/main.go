@@ -34,8 +34,8 @@ func main() {
 }
 
 func experiment(pb *data.Problem, original data.Figure) []*data.Edge {
-	//pb.Figure = search.Solve(pb.Figure, pb.Hole, &pb.Figure.Vertices[30], pb.Epsilon)
-	pb.Figure = search.Solution(pb)
+	pb.Figure = search.Solve(pb.Figure, pb.Hole, &pb.Figure.Vertices[30], pb.Epsilon)
+	//pb.Figure = search.Solution(pb)
 	return cmd.Analyze(pb, original, false)
 }
 
