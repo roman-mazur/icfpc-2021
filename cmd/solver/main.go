@@ -63,6 +63,6 @@ func main() {
 			Bounds: pixel.R(0, 0, 1000, 800),
 		}, &origPb)
 
-		vis.PushFigure(pb.Figure, false, 2, true).PushEdges(unfit).Start()
+		vis.PushFigure(pb.Figure, true, 2, true).PushEdges(unfit).Start()
 	}
 }
