@@ -11,12 +11,7 @@ import (
 func FitScore(f data.Figure, h data.Hole) (score float64) {
 	unfits := ListUnfits(f, h)
 	if len(unfits) == 0 {
-		dislikes := Dislikes(f, h)
-		if dislikes == 0 {
-			return -math.MaxFloat64
-		}
-
-		return -1.0 / dislikes
+		return -1.0 / Dislikes(f, h)
 	}
 
 	nbVertices := len(h.Vertices)
@@ -33,8 +28,9 @@ func FitScore(f data.Figure, h data.Hole) (score float64) {
 				}
 			}
 
-			score += vertScore + float64(nbVertices)
+			score += vertScore
 		}
+		score += float64(nbVertices)
 	}
 
 	return score / float64(nbVertices)

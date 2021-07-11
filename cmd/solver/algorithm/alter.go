@@ -46,7 +46,7 @@ func getRandomEdge(f *data.Figure, h *data.Hole) *data.Edge {
 	unfits := fitness.ListUnfits(*f, *h)
 	nbUnfits := len(unfits)
 
-	if nbUnfits == 0 {
+	if true {
 		return f.Edges[rand.Intn(len(f.Edges))]
 	}
 	return unfits[rand.Intn(nbUnfits)].Edge
