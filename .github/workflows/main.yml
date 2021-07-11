@@ -9,3 +9,11 @@ jobs:
         with:
           go-version: '^1.16'
       - run: go test ./...
+      - run: go run ./solutions/submit.go
+      - uses: EndBug/add-and-commit@v7
+        with:
+          add: 'solutions/submitted.json'
+          author_name: Bot
+          author_email: bot@icfpc2021.github.io
+          branch: main
+          message: "Update submissions"
