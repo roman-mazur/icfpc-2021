@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -22,6 +23,8 @@ var ptrn = regexp.MustCompile("problems_problem.(\\d+)-score-(.+)(_local)?.json"
 
 var doIt = flag.Bool("do-it", false, "Actually do the HTTP calls")
 
+var submitted = make(map[int]int)
+
 func main()  {
 	flag.Parse()
 
@@ -30,6 +33,16 @@ func main()  {
 		if *doIt {
 			log.Println("Setting --do-it to true for the GitHub main branch")
 		}
+	}
+
+	submittedFp := filepath.Join("solutions", "submitted.json")
+	if f, err := os.Open(submittedFp); err == nil {
+		err = json.NewDecoder(f).Decode(&submitted)
+		if err != nil {
+			log.Fatal("Cannot decode submitted.json", err)
+		}
+		f.Close()
+		log.Println(submitted)
 	}
 
 	entries, err := ioutil.ReadDir("./solutions")
@@ -68,6 +81,12 @@ func main()  {
 	ctx := context.Background()
 	for number, solution := range solutions {
 		if solution != "" {
+			score := int(scores[number])
+			if score == submitted[number] {
+				log.Printf("No better solutions for %d", number)
+				continue
+			}
+
 			file, err := os.Open(filepath.Join("solutions", solution))
 			if err != nil {
 				log.Fatal("cannot read", solution)
@@ -79,14 +98,19 @@ func main()  {
 			}
 			req.Header.Add("authorization", "Bearer " + token)
 
-			log.Printf("Submitting for %d with score %f", number, scores[number])
+			log.Printf("Submitting for %d with score %d", number, score)
 			if *doIt {
 				resp, err := http.DefaultClient.Do(req)
 				if err != nil {
 					log.Printf("Error submitting %d: %s", number, err)
 				} else {
 					log.Printf("Status for %d: %d", number, resp.StatusCode)
+					if resp.StatusCode == 200 {
+						submitted[number] = score
+					}
 				}
+			} else {
+				submitted[number] = score
 			}
 
 			file.Close()
@@ -99,4 +123,13 @@ func main()  {
 		}
 	}
 
+	output, err := os.Create(submittedFp)
+	if err != nil {
+		log.Fatal("Cannot store submissions", err)
+	}
+	defer output.Close()
+	err = json.NewEncoder(output).Encode(submitted)
+	if err != nil {
+		log.Fatal("Cannot serialize submissions", err)
+	}
 }

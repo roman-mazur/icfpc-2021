@@ -1,11 +1,11 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/faiface/pixel"
@@ -17,46 +17,50 @@ import (
 	"github.com/roman-mazur/icfpc-2021/profiling"
 )
 
+var (
+	asService  = flag.Bool("as-service", false, "No UI")
+	iterations = flag.Int("iterations", 1000, "Number of iterations")
+	genSize    = flag.Int("gen-size", 1024, "Gen size")
+)
+
 func fatalUsage() {
 	log.Fatalf("Usage: %s file.problem\n", os.Args[0])
 }
 
 func main() {
+	flag.Parse()
 	log.Println("Hello ICFP Contest!")
-	problemPath := "problems/problem.3"
-	if len(os.Args) >= 2 {
-		problemPath = os.Args[1]
+	problemPath := "problems/problem.1"
+	if len(flag.Args()) >= 1 {
+		problemPath = flag.Args()[0]
 	}
+	algorithm.GenerationSize = *genSize
 
 	go profiling.Start()
 
-	iteration := 1000
-
 	pb := data.ParseProblem(problemPath)
-	if len(os.Args) > 2 {
-		iteration, _ = strconv.Atoi(os.Args[2])
-	}
-	if len(os.Args) > 3 {
-		algorithm.GenerationSize, _ = strconv.Atoi(os.Args[3])
-	}
 	original := pb.Figure.Copy()
-	bestMatch := algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, iteration)
+	bestMatch := algorithm.Solve(*pb.Figure, *pb.Hole, pb.Epsilon, *iterations)
 	pb.Figure = &bestMatch.Figure
 
-	unfit := cmd.Analyze(pb, original, false)
+	unfit := cmd.Analyze(pb, original, *asService)
 	if len(unfit) == 0 {
 		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), -1.0/bestMatch.Score)
 		cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
+
+		fmt.Printf("Wrote %s\n", solutionName)
 	}
 
-	gfx.DrawEdges(
-		pixelgl.WindowConfig{
-			Title:  filepath.Base(problemPath),
-			Bounds: pixel.R(0, 0, 1000, 800),
-		},
-		pb.Hole.Edges,
-		original.Edges,
-		pb.Figure.Edges,
-		unfit,
-	)
+	if !*asService {
+		gfx.DrawEdges(
+			pixelgl.WindowConfig{
+				Title:  filepath.Base(problemPath),
+				Bounds: pixel.R(0, 0, 1000, 800),
+			},
+			pb.Hole.Edges,
+			//original.Edges,
+			pb.Figure.Edges,
+			unfit,
+		)
+	}
 }
