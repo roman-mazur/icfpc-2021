@@ -12,9 +12,9 @@ import (
 type Tristate int
 
 const (
-	TristateTrue Tristate = iota
+	TristateUnset Tristate = iota
+	TristateTrue
 	TristateFalse
-	TristateUnset
 )
 
 type VertexMetadata struct {
@@ -50,14 +50,51 @@ func (e Edge) String() string {
 	return fmt.Sprintf("%d[%s->%s]", e.Index, e.A, e.B)
 }
 
+func (e Edge) OtherV(v *Vertex) *Vertex {
+	if e.A == v {
+		return e.B
+	}
+	if e.B == v {
+		return e.A
+	}
+	panic("vertex does not belong to the edge")
+}
+
 type Hole struct {
 	Vertices []Vertex
 	Edges    []*Edge
+
+	center *Vertex
+}
+
+func (h *Hole) Center() Vertex {
+	if h.center != nil {
+		return *h.center
+	}
+	res := Vertex{}
+	for _, v := range h.Vertices {
+		res.X += v.X
+		res.Y += v.Y
+	}
+	res.X /= float64(len(h.Vertices))
+	res.Y /= float64(len(h.Vertices))
+	h.center = &res
+	res.Metadata.Reset()
+	return res
 }
 
 type Figure struct {
 	Vertices []Vertex
 	Edges    []*Edge
+}
+
+func (f *Figure) FindV(v Vertex) *Vertex {
+	for i, fv := range f.Vertices {
+		if fv.X == v.X && fv.Y == v.Y {
+			return &f.Vertices[i]
+		}
+	}
+	return nil
 }
 
 func (f *Figure) GetConnectedEdges(e *Edge) []*Edge {

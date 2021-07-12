@@ -33,8 +33,8 @@ func main() {
 	pb := data.ParseProblem("transform/testdata/endo.problem")
 	original := pb.Figure.Copy()
 
-	//second := pb.Figure.Copy()
-	//experiment(pb, &second)
+	second := pb.Figure.Copy()
+	experiment(pb, &second)
 
 	solution(pb)
 
@@ -49,7 +49,7 @@ func main() {
 		},
 		pb.Hole.Edges,
 		original.Edges,
-		//second.Edges,
+		second.Edges,
 		pb.Figure.Edges,
 		unfitEdges,
 	)
