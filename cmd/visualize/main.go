@@ -24,6 +24,7 @@ func main() {
 	for i := range solution.Vertices {
 		solutionFigure.Vertices[i].X = solution.Vertices[i].X
 		solutionFigure.Vertices[i].Y = solution.Vertices[i].Y
+		solutionFigure.Vertices[i].Metadata.Reset()
 	}
 
 	pb.Figure = &solutionFigure

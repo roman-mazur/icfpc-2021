@@ -68,6 +68,9 @@ func newGeneration(wg *sync.WaitGroup, parents []GenerationItem, h data.Hole, ε
 func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 	var selection = []GenerationItem{}
 	result.Id = -1
+	result.Score = -1
+	result.Figure = f
+
 	allParents := []GenerationItem{{Figure: f, Score: fitness.FitScore(f, h)}}
 	bestScore := 0.0
 	dislikes := 0
