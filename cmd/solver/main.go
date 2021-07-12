@@ -56,7 +56,7 @@ func main() {
 	if len(unfit) == 0 {
 		log.Println("Score:", score)
 		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), float64(score))
-		if cmd.IsBetterSolution(solutionName, score) {
+		if cmd.IsBetterSolution(solutionName, score) && bestMatch.Figure.IsValid(*origPb.Figure, origPb.Epsilon) {
 			cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
 			fmt.Printf("Wrote %s\n", solutionName)
 		} else {
@@ -80,11 +80,14 @@ func main() {
 			adjustedScore = fitness.FitScore(*pb.Figure, *pb.Hole)
 			log.Println("New score: ", int(-1.0/adjustedScore))
 			unfit = cmd.Analyze(pb, *pb.Figure, false)
+			log.Println("Unfits: ", len(unfit))
 		}
 
-		if len(unfit) == 0 && pb.Figure.IsValid(*origPb.Figure, origPb.Epsilon) {
+		if len(unfit) == 0 {
+			validity := pb.Figure.IsValid(*origPb.Figure, origPb.Epsilon)
 			score := int(-1.0 / adjustedScore)
 			log.Println("New score:", score)
+			log.Println("Validity:", validity)
 
 			solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), float64(score))
 			if cmd.IsBetterSolution(solutionName, score) {
