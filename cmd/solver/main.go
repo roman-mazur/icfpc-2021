@@ -19,7 +19,7 @@ import (
 
 var (
 	asService    = flag.Bool("as-service", false, "No UI")
-	iterations   = flag.Int("iterations", 1000, "Number of iterations")
+	iterations   = flag.Int("iterations", 100, "Number of iterations")
 	genSize      = flag.Int("gen-size", 256, "Gen size")
 	parallelGens = flag.Int("gen-parallel", 3, "Number of parallel generations")
 )
@@ -31,7 +31,7 @@ func fatalUsage() {
 func main() {
 	flag.Parse()
 	log.Println("Hello ICFP Contest!")
-	problemPath := "problems/problem.1"
+	problemPath := "problems/problem.5"
 	if len(flag.Args()) >= 1 {
 		problemPath = flag.Args()[0]
 	}
