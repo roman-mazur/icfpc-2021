@@ -30,7 +30,7 @@ done
 
 if [[ "$FILENAME" == "" ]]
 then
-  FILENAME=$(ls *problem.$PROBLEM_ID* | head -n 1)
+  FILENAME=$(ls *problem.$PROBLEM_ID-score* | head -n 1)
 fi
 
 if [[ "$FILENAME" == "" ]] || [[ "$PROBLEM_ID" == "" ]]

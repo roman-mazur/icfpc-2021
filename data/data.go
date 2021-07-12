@@ -12,9 +12,9 @@ import (
 type Tristate int
 
 const (
-	TristateTrue Tristate = iota
+	TristateUnset Tristate = iota
+	TristateTrue
 	TristateFalse
-	TristateUnset
 )
 
 type VertexMetadata struct {
@@ -79,6 +79,7 @@ func (h *Hole) Center() Vertex {
 	res.X /= float64(len(h.Vertices))
 	res.Y /= float64(len(h.Vertices))
 	h.center = &res
+	res.Metadata.Reset()
 	return res
 }
 

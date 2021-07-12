@@ -19,7 +19,7 @@ import (
 
 var (
 	asService    = flag.Bool("as-service", false, "No UI")
-	iterations   = flag.Int("iterations", 1000, "Number of iterations")
+	iterations   = flag.Int("iterations", 100, "Number of iterations")
 	genSize      = flag.Int("gen-size", 256, "Gen size")
 	parallelGens = flag.Int("gen-parallel", 3, "Number of parallel generations")
 )
@@ -31,7 +31,7 @@ func fatalUsage() {
 func main() {
 	flag.Parse()
 	log.Println("Hello ICFP Contest!")
-	problemPath := "problems/problem.1"
+	problemPath := "problems/problem.5"
 	if len(flag.Args()) >= 1 {
 		problemPath = flag.Args()[0]
 	}
@@ -52,11 +52,11 @@ func main() {
 	pb.Figure = &bestMatch.Figure
 
 	unfit := cmd.Analyze(pb, *origPb.Figure, *asService)
+	score := int(-1.0 / bestMatch.Score)
 	if len(unfit) == 0 {
-		score := int(-1.0 / bestMatch.Score)
 		log.Println("Score:", score)
 		solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), float64(score))
-		if cmd.IsBetterSolution(solutionName, score) {
+		if cmd.IsBetterSolution(solutionName, score) && bestMatch.Figure.IsValid(*origPb.Figure, origPb.Epsilon) {
 			cmd.WriteSolution(data.Solution{bestMatch.Figure.Vertices}, solutionName)
 			fmt.Printf("Wrote %s\n", solutionName)
 		} else {
@@ -66,24 +66,28 @@ func main() {
 	}
 
 	if !*asService {
-		wasValid := len(unfit) == 0
-		isValid := false
+		var wasUpdated = true
+		var adjustedScore = bestMatch.Score
 
-		for once := true; once || wasValid && !isValid; once = false {
+		for once := true; once || wasUpdated && len(unfit) > 0; once = false {
 			vis := gfx.NewVisualizer(pixelgl.WindowConfig{
 				Title:  filepath.Base(problemPath),
 				Bounds: pixel.R(0, 0, 1000, 800),
 			}, &origPb)
 
-			vis.PushFigure(pb.Figure, true, 2, true).PushEdges(unfit).Start()
+			wasUpdated = vis.PushFigure(pb.Figure, true, 2, true).PushEdges(unfit).Start()
 
+			adjustedScore = fitness.FitScore(*pb.Figure, *pb.Hole)
+			log.Println("New score: ", int(-1.0/adjustedScore))
 			unfit = cmd.Analyze(pb, *pb.Figure, false)
-			isValid = len(unfit) == 0
+			log.Println("Unfits: ", len(unfit))
 		}
 
 		if len(unfit) == 0 {
-			score := int(-1.0 / fitness.FitScore(*pb.Figure, *pb.Hole))
+			validity := pb.Figure.IsValid(*origPb.Figure, origPb.Epsilon)
+			score := int(-1.0 / adjustedScore)
 			log.Println("New score:", score)
+			log.Println("Validity:", validity)
 
 			solutionName := fmt.Sprintf("%s-score-%f", strings.ReplaceAll(problemPath, "/", "_"), float64(score))
 			if cmd.IsBetterSolution(solutionName, score) {

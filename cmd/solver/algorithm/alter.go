@@ -18,8 +18,8 @@ type action struct {
 }
 
 var actionList = []action{
-	{100, randomFold},
-	{50, randomRotateSmallAngle},
+	{30, randomFold},
+	{70, randomRotateSmallAngle},
 	{30, randomRotate},
 	{5, moveToCenter},
 	//{20, searchForEdges}, // TODO: Causes too many problems and crashes.
@@ -75,7 +75,7 @@ func shortMoveBottomRight(f *data.Figure, h *data.Hole, ε int) string {
 func moveToCenter(f *data.Figure, h *data.Hole, ε int) string {
 	target := h.Center()
 	v := &f.Vertices[rand.Intn(len(f.Vertices))]
-	transform.Matrix(f, v, pixel.IM.Moved(pixel.V(target.X - v.X, target.Y - v.Y)), ε)
+	transform.Matrix(f, v, pixel.IM.Moved(pixel.V(target.X-v.X, target.Y-v.Y)), ε)
 	return fmt.Sprintf("moveToCenter(%s)", target)
 }
 

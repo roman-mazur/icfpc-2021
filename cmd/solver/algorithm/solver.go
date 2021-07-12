@@ -8,7 +8,6 @@ import (
 	"os/signal"
 	"sort"
 	"sync"
-	"syscall"
 
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/fitness"
@@ -69,21 +68,26 @@ func newGeneration(wg *sync.WaitGroup, parents []GenerationItem, h data.Hole, ε
 func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 	var selection = []GenerationItem{}
 	result.Id = -1
+	result.Score = -1
+	result.Figure = f
+
 	allParents := []GenerationItem{{Figure: f, Score: fitness.FitScore(f, h)}}
 	bestScore := 0.0
 	dislikes := 0
 	worstGen := 0
 	worstScore := 0.0
 	noChangeSince := 0
+	stopped := false
 
 	c := make(chan os.Signal)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(c, os.Interrupt)
 	go func() {
 		<-c
-		return
+		stopped = true
+		signal.Reset(os.Interrupt)
 	}()
 
-	for i := 0; i < iter && noChangeSince < max(iter/5, 300); i++ {
+	for i := 0; !stopped && (i < iter && noChangeSince < max(iter/5, 300)); i++ {
 		log.Println("New generation", i, "/", iter, "- gen size:", GenerationSize, "- lastChange:", noChangeSince, "- dislikes:", dislikes, "best / worst generation score:", bestScore, "/", worstScore)
 		wg := new(sync.WaitGroup)
 
@@ -132,11 +136,9 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 				noChangeSince = 0
 				result.Figure = res.Flattened
 				result.Score = res.Score
-				fmt.Println("New result")
 
 				if result.Id == -1 && res.Flattened.IsValid(f, ε) || result.Id == 0 {
 					result.Id = 0 // Always set something as a result.
-					fmt.Println("New valid result")
 
 					dislikes = int(-1.0 / result.Score)
 				}

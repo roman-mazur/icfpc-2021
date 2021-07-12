@@ -119,6 +119,7 @@ func (fe *FigureEntity) mvSelectedVtx(mousePos pixel.Vec) {
 
 	fe.selectedVtx.X = math.Round(mousePos.X)
 	fe.selectedVtx.Y = math.Round(mousePos.Y)
+	fe.selectedVtx.Metadata.Reset()
 }
 
 func getLengthRatioWithMax(edge *data.Edge, origEdge *data.Edge, ε int) (float64, float64) {

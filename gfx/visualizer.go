@@ -38,7 +38,10 @@ func NewVisualizer(cfg pixelgl.WindowConfig, pb *data.Problem) *Visualizer {
 	}
 }
 
-func (vis *Visualizer) Start() {
+// Start returns true if there was an update, false if nothing moved.
+func (vis *Visualizer) Start() (update bool) {
+	update = false
+
 	pixelgl.Run(func() {
 		win, err := pixelgl.NewWindow(vis.winCfg)
 		if err != nil {
@@ -64,7 +67,9 @@ func (vis *Visualizer) Start() {
 			vis.cam.Update(vis.win)
 
 			vis.win.Clear(colornames.Gray)
-			vis.updateInputs()
+			if vis.updateInputs() {
+				update = true
+			}
 
 			grid.Draw(win)
 
@@ -98,6 +103,8 @@ func (vis *Visualizer) Start() {
 			}
 		}
 	})
+
+	return
 }
 
 func (vis *Visualizer) PushFigure(fig *data.Figure, selectable bool, thickness float64, showIndexes bool) *Visualizer {
@@ -124,7 +131,8 @@ func (vis *Visualizer) PushEdges(edges ...[]*data.Edge) *Visualizer {
 }
 
 // Dirty mouse selection
-func (vis *Visualizer) updateInputs() {
+func (vis *Visualizer) updateInputs() (update bool) {
+	update = false
 	if !vis.win.MouseInsideWindow() {
 		return
 	}
@@ -153,7 +161,10 @@ func (vis *Visualizer) updateInputs() {
 
 	if vis.win.MousePosition() != vis.win.MousePreviousPosition() && vis.targetFigure != nil {
 		vis.targetFigure.mvSelectedVtx(mousePos.Scaled(1 / k))
+		update = true
 	}
+
+	return
 }
 
 func (vis *Visualizer) findTargetFigure(mousePos pixel.Vec) {

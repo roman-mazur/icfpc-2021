@@ -44,10 +44,13 @@ func IsBetterSolution(problemPath string, score int) bool {
 
 func Analyze(problem *data.Problem, original data.Figure, failFast bool) (unfitEdges []*data.Edge) {
 	if !problem.Figure.IsValid(original, problem.Epsilon) {
+		json, _ := json.Marshal(problem.Figure)
+		log.Println(string(json))
 		if failFast {
 			log.Fatal("incorrect figure")
 		}
 		log.Println("incorrect figure")
+
 	}
 	unfits := fitness.ListUnfits(*problem.Figure, *problem.Hole)
 	unfitEdges = make([]*data.Edge, len(unfits))
