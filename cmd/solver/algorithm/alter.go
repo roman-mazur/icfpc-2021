@@ -18,9 +18,9 @@ type action struct {
 }
 
 var actionList = []action{
-	{100, randomFold},
-	{0, randomRotateSmallAngle},
-	{0, randomRotate},
+	{30, randomFold},
+	{70, randomRotateSmallAngle},
+	{30, randomRotate},
 	{5, moveToCenter},
 	//{20, searchForEdges}, // TODO: Causes too many problems and crashes.
 	{1, shortMoveTopLeft},
