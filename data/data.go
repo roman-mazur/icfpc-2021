@@ -12,9 +12,9 @@ import (
 type Tristate int
 
 const (
-	TristateTrue Tristate = iota
+	TristateUnset Tristate = iota
+	TristateTrue
 	TristateFalse
-	TristateUnset
 )
 
 type VertexMetadata struct {
