@@ -8,7 +8,6 @@ import (
 	"os/signal"
 	"sort"
 	"sync"
-	"syscall"
 
 	"github.com/roman-mazur/icfpc-2021/data"
 	"github.com/roman-mazur/icfpc-2021/fitness"
@@ -75,15 +74,17 @@ func Solve(f data.Figure, h data.Hole, ε, iter int) (result GenerationItem) {
 	worstGen := 0
 	worstScore := 0.0
 	noChangeSince := 0
+	stopped := false
 
 	c := make(chan os.Signal)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(c, os.Interrupt)
 	go func() {
 		<-c
-		return
+		stopped = true
+		signal.Reset(os.Interrupt)
 	}()
 
-	for i := 0; i < iter && noChangeSince < max(iter/5, 300); i++ {
+	for i := 0; !stopped && (i < iter && noChangeSince < max(iter/5, 300)); i++ {
 		log.Println("New generation", i, "/", iter, "- gen size:", GenerationSize, "- lastChange:", noChangeSince, "- dislikes:", dislikes, "best / worst generation score:", bestScore, "/", worstScore)
 		wg := new(sync.WaitGroup)
 
